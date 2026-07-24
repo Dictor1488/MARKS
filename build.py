@@ -16,14 +16,16 @@ ROOT = Path(__file__).resolve().parent
 CONFIG_PATH = ROOT / "build.json"
 BUILD_DIR = ROOT / "build"
 PYTHON_SOURCES: Tuple[Path, ...] = (
+    ROOT / "python/gui/mods/mod_00_inq_marks_config.py",
     ROOT / "python/gui/mods/mod_inq_marks.py",
     ROOT / "python/gui/mods/mod_inq_marks_rules.py",
 )
 PYTHON_BYTECODE: Tuple[Path, ...] = tuple(path.with_suffix(".pyc") for path in PYTHON_SOURCES)
 
 PACKAGE_FILES: Tuple[Tuple[Path, str], ...] = (
-    (PYTHON_BYTECODE[0], "res/scripts/client/gui/mods/mod_inq_marks.pyc"),
-    (PYTHON_BYTECODE[1], "res/scripts/client/gui/mods/mod_inq_marks_rules.pyc"),
+    (PYTHON_BYTECODE[0], "res/scripts/client/gui/mods/mod_00_inq_marks_config.pyc"),
+    (PYTHON_BYTECODE[1], "res/scripts/client/gui/mods/mod_inq_marks.pyc"),
+    (PYTHON_BYTECODE[2], "res/scripts/client/gui/mods/mod_inq_marks_rules.pyc"),
     (ROOT / "as3/bin/InqMarksPanelHangar.swf", "res/gui/flash/InqMarksPanelHangar.swf"),
     (ROOT / "as3/bin/InqMarksPanelBattle.swf", "res/gui/flash/InqMarksPanelBattle.swf"),
     (ROOT / "resources/in/mods/inq.marks/en.json", "res/mods/inq.marks/en.json"),
