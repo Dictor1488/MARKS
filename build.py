@@ -15,11 +15,15 @@ from typing import Dict, Iterable, Tuple
 ROOT = Path(__file__).resolve().parent
 CONFIG_PATH = ROOT / "build.json"
 BUILD_DIR = ROOT / "build"
-PYTHON_SOURCE = ROOT / "python/gui/mods/mod_inq_marks.py"
-PYTHON_BYTECODE = PYTHON_SOURCE.with_suffix(".pyc")
+PYTHON_SOURCES: Tuple[Path, ...] = (
+    ROOT / "python/gui/mods/mod_inq_marks.py",
+    ROOT / "python/gui/mods/mod_inq_marks_rules.py",
+)
+PYTHON_BYTECODE: Tuple[Path, ...] = tuple(path.with_suffix(".pyc") for path in PYTHON_SOURCES)
 
 PACKAGE_FILES: Tuple[Tuple[Path, str], ...] = (
-    (PYTHON_BYTECODE, "res/scripts/client/gui/mods/mod_inq_marks.pyc"),
+    (PYTHON_BYTECODE[0], "res/scripts/client/gui/mods/mod_inq_marks.pyc"),
+    (PYTHON_BYTECODE[1], "res/scripts/client/gui/mods/mod_inq_marks_rules.pyc"),
     (ROOT / "as3/bin/InqMarksPanelHangar.swf", "res/gui/flash/InqMarksPanelHangar.swf"),
     (ROOT / "as3/bin/InqMarksPanelBattle.swf", "res/gui/flash/InqMarksPanelBattle.swf"),
     (ROOT / "resources/in/mods/inq.marks/en.json", "res/mods/inq.marks/en.json"),
@@ -46,16 +50,17 @@ def require_text(container: Dict[str, object], key: str, section: str) -> str:
 
 
 def compile_python(python_executable: str) -> None:
-    if not PYTHON_SOURCE.is_file():
-        raise FileNotFoundError(PYTHON_SOURCE)
-    PYTHON_BYTECODE.unlink(missing_ok=True)
-    subprocess.run(
-        [python_executable, "-m", "py_compile", str(PYTHON_SOURCE)],
-        cwd=str(ROOT),
-        check=True,
-    )
-    if not PYTHON_BYTECODE.is_file():
-        raise RuntimeError(f"Python 2.7 did not create {PYTHON_BYTECODE.name}")
+    for source, bytecode in zip(PYTHON_SOURCES, PYTHON_BYTECODE):
+        if not source.is_file():
+            raise FileNotFoundError(source)
+        bytecode.unlink(missing_ok=True)
+        subprocess.run(
+            [python_executable, "-m", "py_compile", str(source)],
+            cwd=str(ROOT),
+            check=True,
+        )
+        if not bytecode.is_file():
+            raise RuntimeError(f"Python 2.7 did not create {bytecode.name}")
 
 
 def create_meta(info: Dict[str, object]) -> bytes:
@@ -129,7 +134,8 @@ def main() -> int:
         print(f"Build failed: {exc}", file=sys.stderr)
         return 1
     finally:
-        PYTHON_BYTECODE.unlink(missing_ok=True)
+        for bytecode in PYTHON_BYTECODE:
+            bytecode.unlink(missing_ok=True)
 
 
 if __name__ == "__main__":
