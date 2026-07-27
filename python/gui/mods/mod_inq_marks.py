@@ -173,10 +173,10 @@ _CONFIG_FILE = os.path.join(_CONFIG_DIR, 'marks.json')
 _CACHE_VERSION = 11
 _CACHE_TTL_SECONDS = 3 * 24 * 3600
 _CACHE_SAVE_DEBOUNCE = 3.0
-_VALID_BATTLE_STYLES = ('compact', 'polaroid', 'neer', 'minimal')
-_GARAGE_STYLES = ('compact', 'polaroid')
-_DEFAULT_BATTLE_STYLE = 'compact'
-_CONFIG_STYLE_HINT = 'compact | polaroid | neer | minimal'
+_VALID_BATTLE_STYLES = ('classic', 'compact', 'polaroid', 'neer', 'minimal')
+_GARAGE_STYLES = ('classic', 'compact', 'polaroid')
+_DEFAULT_BATTLE_STYLE = 'classic'
+_CONFIG_STYLE_HINT = 'classic | compact | polaroid | neer | minimal'
 
 _CONFIG_BADGE_STYLES = {
     'classic': 0,
