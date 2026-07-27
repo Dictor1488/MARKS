@@ -3397,20 +3397,20 @@ class InqMarksController(object):
             logger.exception('cache: failed to load')
 
     def _loadConfig(self):
-    config = _loadConfigFile()
-    style = _safeLower(config.get('battleBadgeStyle'))
-    if style not in _VALID_BATTLE_STYLES:
-        style = _DEFAULT_BATTLE_STYLE
+        config = _loadConfigFile()
+        style = _safeLower(config.get('battleBadgeStyle'))
+        if style not in _VALID_BATTLE_STYLES:
+            style = _DEFAULT_BATTLE_STYLE
 
-    styleID = int(_CONFIG_BADGE_STYLES.get(style, 0))
-    self._configEnabled = True
-    self._configMarkBadge = True
-    self._configPanelBodyVisible = False
-    self._configBadgeStyle = styleID
-    self._configBattleBadgeStyle = styleID
-    self._garageBadgeEnabled = style in _GARAGE_STYLES
-    self._markBadgeOpen = True
-    self._battleBadgeEnabled = True
+        styleID = int(_CONFIG_BADGE_STYLES.get(style, 0))
+        self._configEnabled = True
+        self._configMarkBadge = True
+        self._configPanelBodyVisible = False
+        self._configBadgeStyle = styleID
+        self._configBattleBadgeStyle = styleID
+        self._garageBadgeEnabled = style in _GARAGE_STYLES
+        self._markBadgeOpen = True
+        self._battleBadgeEnabled = True
 
     def _scheduleSaveCache(self):
         self._saveRev += 1
