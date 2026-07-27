@@ -1202,10 +1202,14 @@ package com.inq.marks
                 g.endFill();
             }
 
-            // маркер — тонка біла риска на межі заповнення
+            // акуратний маркер на межі заповнення
             var mx:Number = x0 + w * pct;
-            g.beginFill(0xFEFEFE, 1.0);
-            g.drawRect(mx - 1.0, yPos - 5.5, 2.0, 11.0);
+            g.lineStyle(1.25, 0xFEFEFE, 0.96, true, "normal", CapsStyle.ROUND);
+            g.moveTo(mx, yPos - 4.5);
+            g.lineTo(mx, yPos + 4.5);
+            g.lineStyle(NaN);
+            g.beginFill(0xFFFFFF, 0.96);
+            g.drawCircle(mx, yPos, 1.25);
             g.endFill();
 
             g.lineStyle(NaN);
