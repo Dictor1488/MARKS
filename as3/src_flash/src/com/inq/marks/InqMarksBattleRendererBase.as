@@ -1192,16 +1192,17 @@ package com.inq.marks
             var top:Number = yPos - barH / 2;
             var sideH:Number = 18.0;
             var smallH:Number = 8.0;
+            var connectorGap:Number = 2.0;
             var frameSideTicks:Boolean = !isNaN(sideLeft) && !isNaN(sideRight);
             if (isNaN(sideLeft)) sideLeft = x0 - 9.0;
             if (isNaN(sideRight)) sideRight = x0 + w + 9.0;
 
             g.lineStyle(1.0, HTML_FRAME_COLOR, 0.48, true);
             g.moveTo(sideLeft, yPos);
-            g.lineTo(x0, yPos);
+            g.lineTo(x0 - connectorGap, yPos);
             g.moveTo(sideLeft, yPos - sideH * 0.5);
             g.lineTo(sideLeft, yPos + sideH * 0.5);
-            g.moveTo(x0 + w, yPos);
+            g.moveTo(x0 + w + connectorGap, yPos);
             g.lineTo(sideRight, yPos);
             g.moveTo(sideRight, yPos - sideH * 0.5);
             g.lineTo(sideRight, yPos + sideH * 0.5);
@@ -1217,15 +1218,17 @@ package com.inq.marks
 
             // Повний тонкий трек без прямокутної заливки. Кольорова смуга
             // перекриває його до маркера, після маркера лінія лишається видимою.
-            g.lineStyle(1.0, HTML_FRAME_COLOR, 0.42, true);
-            g.moveTo(x0, yPos);
-            g.lineTo(x0 + w, yPos);
+            g.lineStyle(0.75, HTML_FRAME_COLOR, 0.38, true);
+            g.beginFill(0x000000, 0.0);
+            g.drawRect(x0, top, w, barH);
+            g.endFill();
             g.lineStyle(NaN);
 
             if (pct > 0)
             {
                 g.beginFill(color, 1.0);
-                g.drawRect(x0, top, Math.max(1.0, w * pct), barH);
+                g.drawRect(x0 + 0.5, top + 0.5,
+                           Math.max(1.0, (w - 1.0) * pct), Math.max(1.0, barH - 1.0));
                 g.endFill();
             }
 
