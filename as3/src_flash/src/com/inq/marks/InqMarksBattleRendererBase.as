@@ -868,7 +868,7 @@ package com.inq.marks
                 ((delta > 0 ? "+" : "-") + _fmt2(Math.abs(delta)) + "%");
             if (deltaStr.length > 0)
             {
-                _delta.htmlText = _fmt(deltaStr, 13, kind > 0 ? COLOR_GREEN : COLOR_RED);
+                _delta.htmlText = _fmt(deltaStr, 13, kind > 0 ? HTML_GREEN : HTML_RED);
                 _delta.x = 58;
                 _delta.y = 20;
                 _delta.visible = true;
@@ -1018,7 +1018,7 @@ package com.inq.marks
             var gap:Number  = 2;
             var barH:Number = 4;
             var segW:Number = (w - (segs - 1) * gap) / segs;
-            var fillCol:uint = kind >= 0 ? 0x9BD64B : 0xC51917;
+            var fillCol:uint = kind >= 0 ? HTML_GREEN : HTML_BAR_RED;
             var filledLen:Number = w * Math.max(0.0, Math.min(1.0, pct));
             for (var i:int = 0; i < segs; i++)
             {
@@ -1051,7 +1051,7 @@ package com.inq.marks
             {
                 return;
             }
-            var col:uint = _style == 2
+            var col:uint = (_style == STYLE_POLAROID || _style == STYLE_COMPACT)
                 ? (kind > 0 ? HTML_GREEN : HTML_ARROW_RED)
                 : (kind > 0 ? ARROW_UP : ARROW_DOWN);
             var sz:Number = 7;
