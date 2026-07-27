@@ -8,7 +8,6 @@ when that style has a garage renderer.
 
 import json
 import os
-from collections import OrderedDict
 
 import BigWorld
 import constants
@@ -22,14 +21,10 @@ except ImportError:
 _VALID_STYLES = ('classic', 'compact', 'polaroid', 'neer', 'minimal')
 _GARAGE_STYLES = ('classic', 'compact', 'polaroid')
 _DEFAULT_STYLE = 'classic'
-_STYLE_HINT = 'classic | compact | polaroid | neer | minimal'
 
 
 def _minimalConfig(style):
-    return OrderedDict((
-        ('battleBadgeStyle', style),
-        ('_hint', _STYLE_HINT),
-    ))
+    return {'battleBadgeStyle': style}
 
 
 def _loadSingleStyleConfig():
@@ -60,7 +55,7 @@ def _loadSingleStyleConfig():
             with open(marks._CONFIG_FILE, 'wb') as stream:
                 json.dump(config, stream, indent=4)
         except Exception:
-            marks.logger.exception('config: failed to write minimal battleBadgeStyle setting')
+            marks.logger.exception('config: failed to write battleBadgeStyle setting')
     return config
 
 
