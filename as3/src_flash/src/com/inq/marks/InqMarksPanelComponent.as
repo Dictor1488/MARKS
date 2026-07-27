@@ -1196,11 +1196,11 @@ package com.inq.marks
             }
 
             _markBadgeDelta.autoSize = TextFieldAutoSize.LEFT;
-            _markBadgeDelta.htmlText = _fmtPlain("\u0412\u0406\u0414\u041c\u0406\u0422\u041a\u0418 \u041d\u0410 \u0413\u0410\u0420\u041c\u0410\u0422\u0406", 15, 0xFFEECC);
+            _markBadgeDelta.htmlText = _fmtPlain("\u0412\u0406\u0414\u041c\u0406\u0422\u041a\u0418 \u041d\u0410 \u0413\u0410\u0420\u041c\u0410\u0422\u0406", 13, 0xFFEECC);
             _markBadgeDelta.x = bodyX + int((bodyW - _valW(_markBadgeDelta)) * 0.5);
-            _markBadgeDelta.y = -24;
+            _markBadgeDelta.y = -21;
             _markBadgeDelta.scaleX = 1.0;
-            _markBadgeDelta.alpha = _markBadgeExpanded ? _markBadgeTipAnim : 0.0;
+            _markBadgeDelta.alpha = _markBadgeTipAnim;
             _markBadgeDelta.filters = [
                 new GlowFilter(0x000000, 1.0, 2, 2, 2, 1),
                 new GlowFilter(0xFFDF9A, 0.25 + 0.55 * _markBadgeTipAnim, 4, 4, 1.2, 1)

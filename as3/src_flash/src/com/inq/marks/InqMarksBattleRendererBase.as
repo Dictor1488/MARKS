@@ -36,7 +36,7 @@ package com.inq.marks
         public static const STYLE_MINIMAL:int  = 4;
         public static const STYLE_COUNT:int    = 5;
 
-        private static const W_HTML:int     = 192;
+        private static const W_HTML:int     = 194;
         private static const H_HTML:int     = 100;
         private static const H_HTML_EXP:int = 155;
         private static const HTML_X_SCALE:Number = 1.0;
@@ -630,14 +630,14 @@ package com.inq.marks
             _total.visible = true;
 
             _htmlSumValue.htmlText = _fmtTitle(_fmtNum(current), 16, currentColor);
-            _htmlSumValue.x = int(125 - _htmlSumValue.width);
             _htmlSumValue.y = 71;
             _htmlSumValue.visible = true;
 
             _htmlSumTarget.htmlText = _fmt(" / " + (target > 0 ? _fmtNum(target) : "N/A"), 14, COLOR_LABEL);
-            _htmlSumTarget.x = 129;
+            _htmlSumTarget.x = int(W_HTML - 1 - _htmlSumTarget.width);
             _htmlSumTarget.y = 72;
             _htmlSumTarget.visible = true;
+            _htmlSumValue.x = int(_htmlSumTarget.x - _htmlSumValue.width);
 
             _targetLine.visible = _expanded;
             if (_expanded)
