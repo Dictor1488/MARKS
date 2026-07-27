@@ -1215,7 +1215,7 @@ package com.inq.marks
             var currentDamage:int = _estimateCurrentDamage(mark);
             var targetDamage:int = _nextMoeTarget(mark);
             if (targetDamage <= 0) targetDamage = int(_moe[2] > 0 ? _moe[2] : (_moe[3] > 0 ? _moe[3] : 0));
-            _drawBadgeMarkProgress(mark, progressX, progressW, bodyY + 40, 3);
+            _drawBadgeMarkProgress(mark, progressX, progressW, bodyY + 38, 3);
 
             _markBadgeTotal.scaleX = 1.0;
             _markBadgeTotal.htmlText = _fmtPlain("\u041f\u043e\u0442\u043e\u0447\u043d\u0438\u0439 \u043f\u043e\u043a\u0430\u0437\u043d\u0438\u043a", 14, COLOR_LABEL);
@@ -1335,7 +1335,10 @@ package com.inq.marks
         private function _setMarkBadgeTextFilters(style3:Boolean):void
         {
             var filters:Array = style3
-                ? [new GlowFilter(0x000000, 1.0, 2, 2, 2, 1)]
+                ? [
+                    new GlowFilter(0x000000, 0.95, 3, 3, 2.6, 1),
+                    new DropShadowFilter(1.0, 45, 0x000000, 0.70, 2, 2, 1.3, 1)
+                  ]
                 : [new GlowFilter(0x000000, 1.0, 4, 4, 4, 1), new DropShadowFilter(1.2, 45, 0x000000, 0.95, 3, 3, 1.6, 1)];
             _markBadgeValue.filters = filters;
             _markBadgeDelta.filters = filters;
@@ -1410,22 +1413,25 @@ package com.inq.marks
             var g:Graphics = _markBadgeLine.graphics;
             g.clear();
             var pct:Number = Math.max(0.0, Math.min(1.0, mark / 100.0));
-            var trackH:Number = 3.0;
+            var trackH:Number = 2.0;
             var ty:Number = yPos - trackH / 2;
             g.lineStyle(NaN);
-            // Оригінальний SWF використовує єдиний напівпрозорий трек 150x3.
-            g.beginFill(0xECE2BC, 0.106);
+            g.beginFill(0x788491, 0.72);
             g.drawRect(x0, ty, w, trackH);
             g.endFill();
+            if (pct > 0)
+            {
+                g.beginFill(0xFFFFFF, 1.0);
+                g.drawRect(x0, ty, Math.max(1.0, w * pct), trackH);
+                g.endFill();
+            }
             var mx:Number = x0 + w * pct;
-            // Центральна капсула та широкий золотистий ореол повторюють
-            // 16x21 bitmap-маркер з gunmarks-lebwa-lobby.swf.
             g.beginFill(0xFFFFFF, 1.0);
-            g.drawRoundRect(mx - 1.0, yPos - 3.5, 2.0, 7.0, 2.0, 2.0);
+            g.drawRoundRect(mx - 1.0, yPos - 4.0, 2.0, 8.0, 2.0, 2.0);
             g.endFill();
             _markBadgeLine.filters = [
-                new GlowFilter(0xF6E6C6, 0.70, 5, 9, 1.4, 1),
-                new GlowFilter(0xFFDF9A, 0.28, 12, 16, 1.0, 1)
+                new GlowFilter(0xF6E6C6, 0.55, 4, 7, 1.2, 1),
+                new GlowFilter(0xFFDF9A, 0.22, 9, 12, 1.0, 1)
             ];
         }
 
@@ -1674,10 +1680,7 @@ package com.inq.marks
 
         private function _toggleMarkBadgeStyle3Expanded():void
         {
-            var oldBodyY:int = _markBadgeExpanded ? 22 : 0;
             _markBadgeExpanded = !_markBadgeExpanded;
-            var newBodyY:int = _markBadgeExpanded ? 22 : 0;
-            _markBadgeOffset[1] += oldBodyY - newBodyY;
             _markBadgeOffsetSet = true;
             _layoutMarkBadge();
         }
@@ -1773,20 +1776,14 @@ package com.inq.marks
                 stage.removeEventListener(MouseEvent.MOUSE_MOVE, _onMarkBadgeMouseMove);
                 stage.removeEventListener(MouseEvent.MOUSE_UP, _onMarkBadgeMouseUp);
             }
-            if (_markBadgeStyle == 2 && !wasMoved && _isStyle3BuiltinArrowHit())
+            // Короткий клік у будь-якому місці polaroid перемикає стан.
+            // Рух понад CLICK_THRESHOLD як і раніше вважається перетягуванням.
+            if (_markBadgeStyle == 2 && !wasMoved)
             {
                 _toggleMarkBadgeStyle3Expanded();
                 return;
             }
             dispatchEvent(new InqMarksPanelEvent(InqMarksPanelEvent.MARK_BADGE_OFFSET_CHANGED, _markBadgeOffset));
-        }
-
-        private function _isStyle3BuiltinArrowHit():Boolean
-        {
-            if (!_markBadge || !stage) return false;
-            var local:Point = _markBadge.globalToLocal(new Point(stage.mouseX, stage.mouseY));
-            var arrowY:Number = _markBadgeExpanded ? 22 : 0;
-            return local.x >= 1 && local.x <= 31 && local.y >= arrowY && local.y <= arrowY + 30;
         }
 
         private function _redrawDragHit():void

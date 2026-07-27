@@ -41,6 +41,7 @@ package com.inq.marks
         private static const H_HTML_EXP:int = 155;
         private static const HTML_X_SCALE:Number = 1.0;
         private static const BATTLE_EDGE_GAP:int = 4;
+        private static const CLICK_THRESHOLD:Number = 6.0;
         private static const PAD:int    = 24;
 
         private function _curW():int
@@ -120,6 +121,8 @@ package com.inq.marks
         private var _disposed:Boolean  = false;
         private var _offset:Array      = [-1, -1];
         private var _dragging:Boolean  = false;
+        private var _dragStartX:Number = 0.0;
+        private var _dragStartY:Number = 0.0;
         private var _panelCollapsed:Boolean = false;
         private var _controlVisible:Boolean = false;
         // 0 = classic (зірки/число по центру), 1 = compact (зірки+смужки зліва)
@@ -329,6 +332,8 @@ package com.inq.marks
             if (_collapseBtn && _collapseBtn.visible && _collapseBtn.hitTestPoint(stage.mouseX, stage.mouseY, true))
                 return;
             _dragging = true;
+            _dragStartX = x;
+            _dragStartY = y;
             var bounds:Rectangle = new Rectangle(
                 BATTLE_EDGE_GAP, BATTLE_EDGE_GAP,
                 Math.max(0, stage.stageWidth  - _curW() - BATTLE_EDGE_GAP * 2),
@@ -342,15 +347,15 @@ package com.inq.marks
 
         private function _onMouseUp(e:MouseEvent):void
         {
-            _finishDrag();
+            _finishDrag(true);
         }
 
         private function _onMouseLeave(e:Event):void
         {
-            _finishDrag();
+            _finishDrag(false);
         }
 
-        private function _finishDrag():void
+        private function _finishDrag(allowClick:Boolean):void
         {
             if (!_dragging) return;
             stopDrag();
@@ -360,6 +365,16 @@ package com.inq.marks
                 stage.removeEventListener(Event.MOUSE_LEAVE, _onMouseLeave);
             }
             _dragging = false;
+            var dx:Number = x - _dragStartX;
+            var dy:Number = y - _dragStartY;
+            var wasMoved:Boolean = dx * dx + dy * dy > CLICK_THRESHOLD * CLICK_THRESHOLD;
+            if (allowClick && !wasMoved && _style == STYLE_POLAROID)
+            {
+                _expanded = !_expanded;
+                _draw();
+                updatePosition();
+                return;
+            }
             _offset = [int(x), int(y)];
             dispatchEvent(new InqMarksPanelEvent(InqMarksPanelEvent.BATTLE_BADGE_OFFSET_CHANGED, _offset));
         }
@@ -577,8 +592,7 @@ package com.inq.marks
                 ((delta > 0 ? "+" : "-") + _fmt2(Math.abs(delta)) + "%");
             if (deltaStr.length > 0)
             {
-                // В оригінальному battle SWF дельта біла; напрямок задає стрілка.
-                _delta.htmlText = _fmt(deltaStr, 16, COLOR_LABEL);
+                _delta.htmlText = _fmt(deltaStr, 16, COLOR_DIM);
                 _delta.y = 23;
                 _delta.visible = true;
             }
@@ -606,22 +620,22 @@ package com.inq.marks
             var nearestIdx:int = _nearestMilestone(projMark);
             var nearestDmg:int = _milestoneRequiredDamage(nearestIdx);
             var target:int     = _baseDamage > 0 ? _baseDamage : nearestDmg;
-            _drawForecastMarkBarSquare(_line, projMark, delta, 26, 148, 58, 5.0, 0, W_HTML);
+            _drawForecastMarkBarSquare(_line, projMark, delta, 24, 150, 58, 4.0, 0, W_HTML);
             _drawStyle3DetailLine(_expanded);
 
             var currentColor:uint = kind > 0 ? HTML_GREEN : (kind < 0 ? (_currentDamage < 0 ? 0x9F84D6 : HTML_RED) : COLOR_LABEL);
-            _total.htmlText = _fmt(_strSumLabel(), 14, COLOR_LABEL);
+            _total.htmlText = _fmt(_strSumLabel(), 14, COLOR_DIM);
             _total.x = 24;
             _total.y = 72;
             _total.visible = true;
 
             _htmlSumValue.htmlText = _fmtTitle(_fmtNum(current), 16, currentColor);
-            _htmlSumValue.x = int(113 - _htmlSumValue.width);
+            _htmlSumValue.x = int(125 - _htmlSumValue.width);
             _htmlSumValue.y = 71;
             _htmlSumValue.visible = true;
 
             _htmlSumTarget.htmlText = _fmt(" / " + (target > 0 ? _fmtNum(target) : "N/A"), 14, COLOR_LABEL);
-            _htmlSumTarget.x = 117;
+            _htmlSumTarget.x = 129;
             _htmlSumTarget.y = 72;
             _htmlSumTarget.visible = true;
 
@@ -633,7 +647,7 @@ package com.inq.marks
                 var tempoPct:int = projMark > 0 ? int(Math.ceil(projMark)) : 55;
                 if (tempoPct < 55) tempoPct = 55;
                 _targetLabel.htmlText =
-                    _fmt("\u0422\u0435\u043c\u043f \u0434\u043b\u044f " + tempoPct.toString() + "%", 14, COLOR_LABEL);
+                    _fmt("\u0422\u0435\u043c\u043f \u0434\u043b\u044f " + tempoPct.toString() + "%", 14, COLOR_DIM);
                 _targetLabel.x = 24;
                 _targetLabel.y = 105;
                 _targetLabel.visible = true;
@@ -643,7 +657,7 @@ package com.inq.marks
                 _htmlTempoValue1.visible = true;
 
                 _targetDmg.htmlText =
-                    _fmt("\u0422\u0435\u043c\u043f \u0434\u043b\u044f " + milestonePct.toFixed(0) + "%", 14, COLOR_LABEL);
+                    _fmt("\u0422\u0435\u043c\u043f \u0434\u043b\u044f " + milestonePct.toFixed(0) + "%", 14, COLOR_DIM);
                 _targetDmg.x = 24;
                 _targetDmg.y = 127;
                 _targetDmg.visible = true;
@@ -1175,10 +1189,7 @@ package com.inq.marks
             var pct:Number = isNaN(mark) ? 0.0 : Math.max(0.0, Math.min(1.0, mark / 100.0));
             var color:uint = delta > 0.005 ? HTML_GREEN :
                              (delta < -0.005 ? HTML_BAR_RED : COLOR_LABEL);
-            // У Lebwa yPos — верх кольорової смуги; незаповнена частина
-            // лишається прозорою, поверх неї видно тільки тонкий трек.
-            var top:Number = yPos;
-            var centerY:Number = top + barH / 2;
+            var top:Number = yPos - barH / 2;
             var sideH:Number = 18.0;
             var smallH:Number = 8.0;
             var frameSideTicks:Boolean = !isNaN(sideLeft) && !isNaN(sideRight);
@@ -1187,9 +1198,11 @@ package com.inq.marks
 
             g.lineStyle(1.0, HTML_FRAME_COLOR, 0.48, true);
             g.moveTo(sideLeft, yPos);
-            g.lineTo(sideRight, yPos);
+            g.lineTo(x0, yPos);
             g.moveTo(sideLeft, yPos - sideH * 0.5);
             g.lineTo(sideLeft, yPos + sideH * 0.5);
+            g.moveTo(x0 + w, yPos);
+            g.lineTo(sideRight, yPos);
             g.moveTo(sideRight, yPos - sideH * 0.5);
             g.lineTo(sideRight, yPos + sideH * 0.5);
 
@@ -1202,7 +1215,8 @@ package com.inq.marks
                 g.lineTo(x0 + w, yPos + smallH * 0.5);
             }
 
-            // Без сірої підкладки: трек повністю прозорий.
+            // Незаповнена частина прозора: без сірої прямокутної заливки.
+            // Видимими лишаються тільки тонкі конектори та межі.
             g.lineStyle(NaN);
 
             if (pct > 0)
@@ -1212,16 +1226,10 @@ package com.inq.marks
                 g.endFill();
             }
 
-            // 16x23-подібний glow-маркер з battle SWF.
+            // Тонкий маркер, як у попередній версії нашого бара.
             var mx:Number = x0 + w * pct;
-            g.beginFill(color, 0.06);
-            g.drawEllipse(mx - 8.0, centerY - 11.5, 16.0, 23.0);
-            g.endFill();
-            g.beginFill(color, 0.18);
-            g.drawEllipse(mx - 4.0, centerY - 8.0, 8.0, 16.0);
-            g.endFill();
-            g.beginFill(0xFFFFFF, 1.0);
-            g.drawRoundRect(mx - 1.0, centerY - 3.5, 2.0, 7.0, 2.0, 2.0);
+            g.beginFill(0xFEFEFE, 1.0);
+            g.drawRect(mx - 1.0, yPos - 5.5, 2.0, 11.0);
             g.endFill();
 
             g.lineStyle(NaN);
