@@ -36,7 +36,7 @@ package com.inq.marks
         public static const STYLE_MINIMAL:int  = 4;
         public static const STYLE_COUNT:int    = 5;
 
-        private static const W_HTML:int     = 190;
+        private static const W_HTML:int     = 192;
         private static const H_HTML:int     = 100;
         private static const H_HTML_EXP:int = 155;
         private static const HTML_X_SCALE:Number = 1.0;
@@ -538,7 +538,7 @@ package com.inq.marks
             var gm:Matrix = new Matrix();
             gm.createGradientBox(glowW, glowH, 0, (W_HTML - glowW) / 2, ((_expanded ? H_HTML_EXP : H_HTML) - glowH) / 2);
             g.beginGradientFill(GradientType.RADIAL,
-                [0x000000, 0x000000], [0.22, 0.0], [0, 255], gm);
+                [0x000000, 0x000000], [0.55, 0.0], [0, 255], gm);
             g.drawRect((W_HTML - glowW) / 2, ((_expanded ? H_HTML_EXP : H_HTML) - glowH) / 2, glowW, glowH);
             g.endFill();
 
@@ -773,18 +773,18 @@ package com.inq.marks
             _collapseBtn.y = by;
 
             g.beginFill(0x141A22, 0.50);
-            g.drawRect(0, 0, s, s);
+            g.drawRoundRect(0, 0, s, s, 8, 8);
             g.endFill();
             g.lineStyle(1.0, HTML_FRAME_COLOR, 0.45, true);
-            g.drawRect(0.5, 0.5, s - 1, s - 1);
+            g.drawRoundRect(0.5, 0.5, s - 1, s - 1, 7, 7);
 
             g.lineStyle(1.5, COLOR_LABEL, 1.0, true);
-            g.moveTo(4, s * 0.5);
-            g.lineTo(s - 4, s * 0.5);
+            g.moveTo(5, s * 0.5);
+            g.lineTo(s - 5, s * 0.5);
             if (_panelCollapsed)
             {
-                g.moveTo(s * 0.5, 4);
-                g.lineTo(s * 0.5, s - 4);
+                g.moveTo(s * 0.5, 5);
+                g.lineTo(s * 0.5, s - 5);
             }
             g.lineStyle(NaN);
         }
@@ -1215,8 +1215,11 @@ package com.inq.marks
                 g.lineTo(x0 + w, yPos + smallH * 0.5);
             }
 
-            // Незаповнена частина прозора: без сірої прямокутної заливки.
-            // Видимими лишаються тільки тонкі конектори та межі.
+            // Повний тонкий трек без прямокутної заливки. Кольорова смуга
+            // перекриває його до маркера, після маркера лінія лишається видимою.
+            g.lineStyle(1.0, HTML_FRAME_COLOR, 0.42, true);
+            g.moveTo(x0, yPos);
+            g.lineTo(x0 + w, yPos);
             g.lineStyle(NaN);
 
             if (pct > 0)
