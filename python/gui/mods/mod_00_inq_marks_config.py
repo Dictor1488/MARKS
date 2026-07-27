@@ -10,9 +10,9 @@ _CONFIG_DIR = os.path.normpath(
     os.path.join(os.getcwd(), 'mods', 'configs', 'inq', 'marks')
 )
 _CONFIG_FILE = os.path.join(_CONFIG_DIR, 'marks.json')
-_VALID_STYLES = ('classic', 'compact', 'polaroid', 'minimal')
-_DEFAULT_STYLE = 'classic'
-_STYLE_HINT = 'classic | compact | polaroid | minimal'
+_VALID_STYLES = ('compact', 'polaroid', 'neer', 'minimal')
+_DEFAULT_STYLE = 'compact'
+_STYLE_HINT = 'compact | polaroid | neer | minimal'
 
 
 def _safeLower(value):
