@@ -3,7 +3,6 @@
 
 import json
 import os
-from collections import OrderedDict
 
 
 _CONFIG_DIR = os.path.normpath(
@@ -12,7 +11,6 @@ _CONFIG_DIR = os.path.normpath(
 _CONFIG_FILE = os.path.join(_CONFIG_DIR, 'marks.json')
 _VALID_STYLES = ('classic', 'compact', 'polaroid', 'neer', 'minimal')
 _DEFAULT_STYLE = 'classic'
-_STYLE_HINT = 'classic | compact | polaroid | neer | minimal'
 
 
 def _safeLower(value):
@@ -37,10 +35,7 @@ def _ensureConfigDir():
 
 
 def _minimalConfig(style):
-    return OrderedDict((
-        ('battleBadgeStyle', style),
-        ('_hint', _STYLE_HINT),
-    ))
+    return {'battleBadgeStyle': style}
 
 
 def _prepareConfig():
