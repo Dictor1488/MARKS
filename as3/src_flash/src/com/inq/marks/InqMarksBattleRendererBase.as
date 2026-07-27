@@ -904,7 +904,7 @@ package com.inq.marks
             _total.x = int(contentR - _total.width);
             _total.y = 66;
 
-            _targetLabel.htmlText = _fmt(_strSumLabel(), 12, COMPACT_DIM_WHITE);
+            _targetLabel.htmlText = _fmt(_strSumLabel(), 12, 0xE2E8EE);
             _targetLabel.x = contentX;
             _targetLabel.y = 66;
             _targetLabel.visible = true;
@@ -915,7 +915,8 @@ package com.inq.marks
             {
                 var milestoneIdx:int    = _nearestMilestone(projMark);
                 var milestonePct:Number = Number(MILESTONE_PCTS[milestoneIdx]);
-                var milestoneColor:uint = uint(MILESTONE_COLORS[milestoneIdx]);
+                var milestoneColor:uint = milestoneIdx == 0 ? 0xB8C4CC :
+                                    (milestoneIdx == 1 ? 0xE0E0E0 : 0xE6D8A0);
                 var milestoneDmg:int    = _milestoneRequiredDamage(milestoneIdx);
                 var pctStr:String = milestonePct.toFixed(0) + "%";
                 var dmgStr:String = _fmtNum(milestoneDmg);
