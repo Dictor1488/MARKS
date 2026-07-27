@@ -899,8 +899,8 @@ package com.inq.marks
             _drawSegmentBar(_line, startMark / 100.0, kind, contentX, contentR - contentX, 48);
 
             // ── "Загалом" + "cur / req" (обидва приглушено-білі) ──
-            _total.htmlText = _fmt(_fmtNum(current) + " / " +
-                              (target > 0 ? _fmtNum(target) : "N/A"), 12, COMPACT_DIM_WHITE);
+            _total.htmlText = _fmt(_fmtNum(current), 12, COLOR_LABEL) +
+                    _fmt(" / " + (target > 0 ? _fmtNum(target) : "N/A"), 12, 0xE2E8EE);
             _total.x = int(contentR - _total.width);
             _total.y = 66;
 
