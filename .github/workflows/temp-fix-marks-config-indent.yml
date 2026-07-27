@@ -1,0 +1,96 @@
+name: Temporary fix Marks config indentation
+
+on:
+  pull_request:
+    types: [synchronize]
+    branches: [main]
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    if: github.event.pull_request.head.repo.full_name == github.repository && github.head_ref == 'agent/minimal-marks-config'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref }}
+          fetch-depth: 0
+
+      - name: Fix method indentation
+        shell: python
+        run: |
+          from pathlib import Path
+
+          path = Path('python/gui/mods/mod_inq_marks.py')
+          text = path.read_text(encoding='utf-8')
+          broken = '''    def _loadConfig(self):
+              config = _loadConfigFile()
+              style = _safeLower(config.get('battleBadgeStyle'))
+              if style not in _VALID_BATTLE_STYLES:
+                  style = _DEFAULT_BATTLE_STYLE
+
+              styleID = int(_CONFIG_BADGE_STYLES.get(style, 0))
+              self._configEnabled = True
+              self._configMarkBadge = True
+              self._configPanelBodyVisible = False
+              self._configBadgeStyle = styleID
+              self._configBattleBadgeStyle = styleID
+              self._garageBadgeEnabled = style in _GARAGE_STYLES
+              self._markBadgeOpen = True
+              self._battleBadgeEnabled = True
+
+          '''
+          # The current broken branch has the method body at class indentation.
+          broken = broken.replace('              ', '    ')
+          fixed = '''    def _loadConfig(self):
+              config = _loadConfigFile()
+              style = _safeLower(config.get('battleBadgeStyle'))
+              if style not in _VALID_BATTLE_STYLES:
+                  style = _DEFAULT_BATTLE_STYLE
+
+              styleID = int(_CONFIG_BADGE_STYLES.get(style, 0))
+              self._configEnabled = True
+              self._configMarkBadge = True
+              self._configPanelBodyVisible = False
+              self._configBadgeStyle = styleID
+              self._configBattleBadgeStyle = styleID
+              self._garageBadgeEnabled = style in _GARAGE_STYLES
+              self._markBadgeOpen = True
+              self._battleBadgeEnabled = True
+
+          '''
+          import textwrap
+          fixed = textwrap.dedent(fixed)
+          lines = fixed.splitlines(True)
+          fixed = ''.join(('    ' + line if line.strip() else line) for line in lines)
+          # Add another four spaces to every body line, keeping def at four spaces.
+          fixed_lines = fixed.splitlines(True)
+          fixed = fixed_lines[0] + ''.join(
+              ('    ' + line if line.strip() else line) for line in fixed_lines[1:]
+          )
+
+          start = text.index('    def _loadConfig(self):')
+          end = text.index('\n    def _scheduleSaveCache', start)
+          text = text[:start] + fixed + text[end + 1:]
+          path.write_text(text, encoding='utf-8')
+
+      - name: Validate indentation and config shape
+        shell: python
+        run: |
+          from pathlib import Path
+          text = Path('python/gui/mods/mod_inq_marks.py').read_text(encoding='utf-8')
+          assert '    def _loadConfig(self):\n        config = _loadConfigFile()' in text
+          assert '\n    def _scheduleSaveCache(self):' in text
+          assert "_VALID_BATTLE_STYLES = ('classic', 'compact', 'polaroid', 'neer')" in text
+          assert "self._garageBadgeEnabled = style in _GARAGE_STYLES" in text
+
+      - name: Remove helper and commit
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git rm -f .github/workflows/temp-fix-marks-config-indent.yml
+          git add python/gui/mods/mod_inq_marks.py
+          git commit -m "Fix Marks config loader indentation"
+          git push origin HEAD:${{ github.head_ref }}
