@@ -6,7 +6,7 @@ import logging
 import os
 import time
 import zlib
-from collections import deque
+from collections import deque, OrderedDict
 
 import weakref
 
@@ -173,12 +173,10 @@ _CONFIG_FILE = os.path.join(_CONFIG_DIR, 'marks.json')
 _CACHE_VERSION = 11
 _CACHE_TTL_SECONDS = 3 * 24 * 3600
 _CACHE_SAVE_DEBOUNCE = 3.0
-_CONFIG_DEFAULTS = {
-    'garageBadgeStyle': 'classic',
-    'battleBadgeStyle': 'classic',
-    'garageBadgeStyles': {'classic':'garage style 1','compact':'garage style 2','polaroid':'garage style 3'},
-    'battleBadgeStyles': {'classic':'battle style 1','compact':'battle style 2','polaroid':'battle style 3','neer':'battle style 4','minimal':'battle style 5'},
-}
+_VALID_BATTLE_STYLES = ('classic', 'compact', 'polaroid', 'neer')
+_GARAGE_STYLES = ('classic', 'compact', 'polaroid')
+_DEFAULT_BATTLE_STYLE = 'classic'
+_CONFIG_STYLE_HINT = 'classic | compact | polaroid | neer'
 
 _CONFIG_BADGE_STYLES = {
     'classic': 0,
@@ -298,28 +296,41 @@ def _ensureConfigDir():
     _ensureDir(_CONFIG_DIR)
 
 
+def _minimalConfig(style):
+    return OrderedDict((
+        ('battleBadgeStyle', style),
+        ('_hint', _CONFIG_STYLE_HINT),
+    ))
+
+
 def _loadConfigFile():
     _ensureConfigDir()
     loaded = {}
-    changed = False
     if os.path.isfile(_CONFIG_FILE):
         try:
-            with open(_CONFIG_FILE, 'rb') as fh: loaded = json.load(fh)
-            if not isinstance(loaded, dict): loaded = {}; changed = True
-        except Exception: loaded = {}; changed = True
-    else: changed = True
-    garage = _safeLower(loaded.get('garageBadgeStyle'))
-    battle = _safeLower(loaded.get('battleBadgeStyle'))
-    if garage not in ('classic','compact','polaroid'): garage='classic'; changed=True
-    if battle not in _CONFIG_BADGE_STYLES: battle='classic'; changed=True
-    config=dict(_CONFIG_DEFAULTS); config['garageBadgeStyle']=garage; config['battleBadgeStyle']=battle
-    if loaded != config: changed=True
-    if changed:
-        try:
-            with open(_CONFIG_FILE,'wb') as fh: json.dump(config,fh,indent=4,sort_keys=True)
-        except Exception: logger.exception('config: failed to write defaults')
-    return config
+            with open(_CONFIG_FILE, 'rb') as fh:
+                loaded = json.load(fh)
+            if not isinstance(loaded, dict):
+                loaded = {}
+        except Exception:
+            loaded = {}
 
+    style = _safeLower(loaded.get('battleBadgeStyle'))
+    if style not in _VALID_BATTLE_STYLES:
+        style = _safeLower(loaded.get('badgeStyle'))
+    if style not in _VALID_BATTLE_STYLES:
+        style = _safeLower(loaded.get('garageBadgeStyle'))
+    if style not in _VALID_BATTLE_STYLES:
+        style = _DEFAULT_BATTLE_STYLE
+
+    config = _minimalConfig(style)
+    if loaded != config:
+        try:
+            with open(_CONFIG_FILE, 'wb') as fh:
+                json.dump(config, fh, indent=4)
+        except Exception:
+            logger.exception('config: failed to write minimal battle style config')
+    return config
 
 def _isCloseBrowserMethod(methodName):
     text = _safeLower(methodName)
@@ -1288,6 +1299,7 @@ class InqMarksController(object):
         self._lastBattleVisibleState = None
         self._userHidden           = False
         self._battleBadgeEnabled   = True
+        self._garageBadgeEnabled   = True
         self._battleHiddenReasons  = set()
         self._battleGuiEventsBound = False
         self._battleKillCamBound   = False
@@ -1875,7 +1887,8 @@ class InqMarksController(object):
                     hangarCheck = self._isHangarState(routeInfo.state)
             except Exception:
                 pass
-        visible = bool(self._configEnabled
+        visible = bool(getattr(self, '_garageBadgeEnabled', True)
+                       and self._configEnabled
                        and hangarCheck and self._visibleByData
                        and not self._modsSettingsOpen
                        and self._queueModeAllowed
@@ -3385,20 +3398,19 @@ class InqMarksController(object):
 
     def _loadConfig(self):
         config = _loadConfigFile()
+        style = _safeLower(config.get('battleBadgeStyle'))
+        if style not in _VALID_BATTLE_STYLES:
+            style = _DEFAULT_BATTLE_STYLE
+
+        styleID = int(_CONFIG_BADGE_STYLES.get(style, 0))
         self._configEnabled = True
         self._configMarkBadge = True
         self._configPanelBodyVisible = False
-        garageName = _safeLower(config.get('garageBadgeStyle'))
-        battleName = _safeLower(config.get('battleBadgeStyle'))
-        if garageName not in ('classic', 'compact', 'polaroid'):
-            garageName = 'classic'
-        if battleName not in _CONFIG_BADGE_STYLES:
-            battleName = 'classic'
-        self._configBadgeStyle = int(_CONFIG_BADGE_STYLES.get(garageName, 0))
-        self._configBattleBadgeStyle = int(_CONFIG_BADGE_STYLES.get(battleName, 0))
+        self._configBadgeStyle = styleID
+        self._configBattleBadgeStyle = styleID
+        self._garageBadgeEnabled = style in _GARAGE_STYLES
         self._markBadgeOpen = True
         self._battleBadgeEnabled = True
-
 
     def _scheduleSaveCache(self):
         self._saveRev += 1

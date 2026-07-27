@@ -1,12 +1,14 @@
 # -*- coding: utf-8 -*-
 """Runtime rules for INQ Marks.
 
-Keeps the battle badge limited to standard random battles and exposes one
-badgeStyle setting for both battle and hangar presentation.
+Keeps the battle badge limited to standard random battles, uses one public
+battleBadgeStyle setting, and selects a matching garage badge automatically
+when that style has a garage renderer.
 """
 
 import json
 import os
+from collections import OrderedDict
 
 import BigWorld
 import constants
@@ -17,8 +19,17 @@ except ImportError:
     import mod_inq_marks as marks
 
 
+_VALID_STYLES = ('classic', 'compact', 'polaroid', 'neer')
 _GARAGE_STYLES = ('classic', 'compact', 'polaroid')
 _DEFAULT_STYLE = 'classic'
+_STYLE_HINT = 'classic | compact | polaroid | neer'
+
+
+def _minimalConfig(style):
+    return OrderedDict((
+        ('battleBadgeStyle', style),
+        ('_hint', _STYLE_HINT),
+    ))
 
 
 def _loadSingleStyleConfig():
@@ -33,29 +44,30 @@ def _loadSingleStyleConfig():
         except Exception:
             loaded = {}
 
-    style = marks._safeLower(loaded.get('badgeStyle'))
-    if style not in marks._CONFIG_BADGE_STYLES:
-        # One-time migration from the old two-style config.
-        style = marks._safeLower(loaded.get('battleBadgeStyle'))
-    if style not in marks._CONFIG_BADGE_STYLES:
+    style = marks._safeLower(loaded.get('battleBadgeStyle'))
+    if style not in _VALID_STYLES:
+        # One-time migration from the previous single-style config.
+        style = marks._safeLower(loaded.get('badgeStyle'))
+    if style not in _VALID_STYLES:
+        # One-time migration from an old garage-only config.
         style = marks._safeLower(loaded.get('garageBadgeStyle'))
-    if style not in marks._CONFIG_BADGE_STYLES:
+    if style not in _VALID_STYLES:
         style = _DEFAULT_STYLE
 
-    config = {'badgeStyle': style}
+    config = _minimalConfig(style)
     if loaded != config:
         try:
             with open(marks._CONFIG_FILE, 'wb') as stream:
-                json.dump(config, stream, indent=4, sort_keys=True)
+                json.dump(config, stream, indent=4)
         except Exception:
-            marks.logger.exception('config: failed to write single badgeStyle setting')
+            marks.logger.exception('config: failed to write minimal battleBadgeStyle setting')
     return config
 
 
 def _loadSingleStyle(self):
     config = _loadSingleStyleConfig()
-    style = marks._safeLower(config.get('badgeStyle'))
-    if style not in marks._CONFIG_BADGE_STYLES:
+    style = marks._safeLower(config.get('battleBadgeStyle'))
+    if style not in _VALID_STYLES:
         style = _DEFAULT_STYLE
 
     styleID = int(marks._CONFIG_BADGE_STYLES.get(style, 0))
