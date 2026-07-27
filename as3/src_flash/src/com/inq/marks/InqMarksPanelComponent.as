@@ -1,6 +1,5 @@
 package com.inq.marks
 {
-    import flash.display.CapsStyle;
     import flash.display.DisplayObjectContainer;
     import flash.display.GradientType;
     import flash.display.Graphics;
@@ -798,8 +797,8 @@ package com.inq.marks
         private static const MARK_BADGE_H:int = 86;
         private static const MARK_BADGE_H_EXP:int = 132;
         private static const MARK_BADGE_HTML_SCALE:Number = 1.0;
-        private static const MARK_BADGE_W_HTML:int = 224;
-        private static const MARK_BADGE_H_HTML:int = 77;
+        private static const MARK_BADGE_W_HTML:int = 218;
+        private static const MARK_BADGE_H_HTML:int = 54;
         private static const MARK_BADGE_H_HTML_EXP:int = 132;
         private static const MARK_BADGE_PAD:int = 24;
         private static const MARK_BADGE_GAP:int = 8;
@@ -1171,18 +1170,18 @@ package com.inq.marks
             _drawStyle3LobbyPanel(g, _markBadgeExpanded, _markBadgeHovered);
             var mark:Number = isNaN(_currentMark) ? 0.0 : _currentMark;
             var filled:int = _markStars >= 0 ? _markStars : 0;
-            var bodyX:Number = 34;
+            var bodyX:Number = 28;
             var bodyW:Number = 190;
-            var bodyY:Number = _markBadgeExpanded ? 24 : 0;
-            var progressX:Number = bodyX + 19;
-            var progressW:Number = 155;
+            var bodyY:Number = 0;
+            var progressX:Number = bodyX + 20;
+            var progressW:Number = 150;
 
             var sg:Graphics = _markBadgeStars.graphics;
             sg.clear();
             for (var i:int = 0; i < 3; i++)
             {
-                var starGX:Number = bodyX + 119 + i * 19;
-                var starGY:Number = bodyY + 20;
+                var starGX:Number = bodyX + 129 + i * 19;
+                var starGY:Number = bodyY + 19;
                 sg.lineStyle(1.0, 0x9EAAB6, 0.58, true);
                 sg.beginFill(0x26313C, 0.50);
                 _starPath(sg, starGX, starGY, 7, 3.0);
@@ -1199,7 +1198,7 @@ package com.inq.marks
             _markBadgeDelta.autoSize = TextFieldAutoSize.LEFT;
             _markBadgeDelta.htmlText = _fmtPlain("\u0412\u0406\u0414\u041c\u0406\u0422\u041a\u0418 \u041d\u0410 \u0413\u0410\u0420\u041c\u0410\u0422\u0406", 10, 0xFFEECC);
             _markBadgeDelta.x = bodyX + int((bodyW - _valW(_markBadgeDelta)) * 0.5);
-            _markBadgeDelta.y = 7;
+            _markBadgeDelta.y = -18;
             _markBadgeDelta.scaleX = 1.0;
             _markBadgeDelta.alpha = _markBadgeExpanded ? _markBadgeTipAnim : 0.0;
             _markBadgeDelta.filters = [
@@ -1208,59 +1207,59 @@ package com.inq.marks
             ];
             _markBadgeDelta.visible = true;
 
-            _markBadgeValue.htmlText = _fmtTitle(_fmt2(mark) + "%", 26, COLOR_LABEL);
-            _markBadgeValue.x = 53;
-            _markBadgeValue.y = bodyY + 11;
+            _markBadgeValue.htmlText = _fmtTitle(_fmt2(mark) + "%", 20, COLOR_LABEL);
+            _markBadgeValue.x = bodyX + 19;
+            _markBadgeValue.y = bodyY + 7;
             _markBadgeValue.scaleX = 1.0;
 
             var currentDamage:int = _estimateCurrentDamage(mark);
             var targetDamage:int = _nextMoeTarget(mark);
             if (targetDamage <= 0) targetDamage = int(_moe[2] > 0 ? _moe[2] : (_moe[3] > 0 ? _moe[3] : 0));
-            _drawBadgeMarkProgress(mark, progressX, progressW, bodyY + 48, 4);
+            _drawBadgeMarkProgress(mark, progressX, progressW, bodyY + 40, 3);
 
             _markBadgeTotal.scaleX = 1.0;
-            _markBadgeTotal.htmlText = _fmtPlain("\u041f\u043e\u0442\u043e\u0447\u043d\u0438\u0439 \u043f\u043e\u043a\u0430\u0437\u043d\u0438\u043a", 12, COLOR_LABEL_SOFT);
-            _markBadgeTotal.x = bodyX + 17;
-            _markBadgeTotal.y = bodyY + 58;
+            _markBadgeTotal.htmlText = _fmtPlain("\u041f\u043e\u0442\u043e\u0447\u043d\u0438\u0439 \u043f\u043e\u043a\u0430\u0437\u043d\u0438\u043a", 14, COLOR_LABEL);
+            _markBadgeTotal.x = bodyX + 19;
+            _markBadgeTotal.y = bodyY + 51;
             _markBadgeTotal.visible = _markBadgeExpanded;
             _markBadgeCurrentValue.scaleX = 1.0;
-            _markBadgeCurrentValue.htmlText = _fmtTitle(currentDamage > 0 ? _fmtNum(currentDamage) : _strNoData, 13, 0xFFEECC);
-            _markBadgeCurrentValue.x = bodyX + 178 - _valW(_markBadgeCurrentValue);
-            _markBadgeCurrentValue.y = bodyY + 58;
+            _markBadgeCurrentValue.htmlText = _fmtTitle(currentDamage > 0 ? _fmtNum(currentDamage) : _strNoData, 14, 0xFFEECC);
+            _markBadgeCurrentValue.x = bodyX + 172 - _valW(_markBadgeCurrentValue);
+            _markBadgeCurrentValue.y = bodyY + 51;
             _markBadgeCurrentValue.visible = _markBadgeExpanded;
 
-            _markBadgeDetail1.htmlText = _fmtPlain("65%", 12, COLOR_LABEL_SOFT);
-            _markBadgeDetail1.x = bodyX + 17;
-            _markBadgeDetail1.y = bodyY + 85;
+            _markBadgeDetail1.htmlText = _fmtPlain("65%", 14, COLOR_LABEL_SOFT);
+            _markBadgeDetail1.x = bodyX + 19;
+            _markBadgeDetail1.y = bodyY + 86;
             _markBadgeDetail1.visible = _markBadgeExpanded;
-            _markBadgeDetail1Value.htmlText = _fmtPlain(_moe[0] > 0 ? _fmtNum(int(_moe[0])) : _strNoData, 12, COLOR_LABEL);
-            _markBadgeDetail1Value.x = bodyX + 62;
-            _markBadgeDetail1Value.y = bodyY + 85;
+            _markBadgeDetail1Value.htmlText = _fmtPlain(_moe[0] > 0 ? _fmtNum(int(_moe[0])) : _strNoData, 14, COLOR_LABEL);
+            _markBadgeDetail1Value.x = bodyX + 89 - _valW(_markBadgeDetail1Value);
+            _markBadgeDetail1Value.y = bodyY + 86;
             _markBadgeDetail1Value.visible = _markBadgeExpanded;
-            _markBadgeDetail1Right.htmlText = _fmtPlain("85%", 12, COLOR_LABEL_SOFT);
-            _markBadgeDetail1Right.x = bodyX + 107;
-            _markBadgeDetail1Right.y = bodyY + 85;
+            _markBadgeDetail1Right.htmlText = _fmtPlain("85%", 14, COLOR_LABEL_SOFT);
+            _markBadgeDetail1Right.x = bodyX + 102;
+            _markBadgeDetail1Right.y = bodyY + 86;
             _markBadgeDetail1Right.visible = _markBadgeExpanded;
-            _markBadgeDetail1RightValue.htmlText = _fmtPlain(_moe[1] > 0 ? _fmtNum(int(_moe[1])) : _strNoData, 12, COLOR_LABEL);
-            _markBadgeDetail1RightValue.x = bodyX + 178 - _valW(_markBadgeDetail1RightValue);
-            _markBadgeDetail1RightValue.y = bodyY + 85;
+            _markBadgeDetail1RightValue.htmlText = _fmtPlain(_moe[1] > 0 ? _fmtNum(int(_moe[1])) : _strNoData, 14, COLOR_LABEL);
+            _markBadgeDetail1RightValue.x = bodyX + 172 - _valW(_markBadgeDetail1RightValue);
+            _markBadgeDetail1RightValue.y = bodyY + 86;
             _markBadgeDetail1RightValue.visible = _markBadgeExpanded;
 
-            _markBadgeDetail2.htmlText = _fmtPlain("95%", 12, COLOR_LABEL_SOFT);
-            _markBadgeDetail2.x = bodyX + 17;
-            _markBadgeDetail2.y = bodyY + 108;
+            _markBadgeDetail2.htmlText = _fmtPlain("95%", 14, COLOR_LABEL_SOFT);
+            _markBadgeDetail2.x = bodyX + 19;
+            _markBadgeDetail2.y = bodyY + 106;
             _markBadgeDetail2.visible = _markBadgeExpanded;
-            _markBadgeDetail2Value.htmlText = _fmtPlain(_moe[2] > 0 ? _fmtNum(int(_moe[2])) : _strNoData, 12, COLOR_LABEL);
-            _markBadgeDetail2Value.x = bodyX + 62;
-            _markBadgeDetail2Value.y = bodyY + 108;
+            _markBadgeDetail2Value.htmlText = _fmtPlain(_moe[2] > 0 ? _fmtNum(int(_moe[2])) : _strNoData, 14, COLOR_LABEL);
+            _markBadgeDetail2Value.x = bodyX + 89 - _valW(_markBadgeDetail2Value);
+            _markBadgeDetail2Value.y = bodyY + 106;
             _markBadgeDetail2Value.visible = _markBadgeExpanded;
-            _markBadgeDetail2Right.htmlText = _fmtPlain("100%", 12, COLOR_LABEL_SOFT);
-            _markBadgeDetail2Right.x = bodyX + 105;
-            _markBadgeDetail2Right.y = bodyY + 108;
+            _markBadgeDetail2Right.htmlText = _fmtPlain("100%", 14, COLOR_LABEL_SOFT);
+            _markBadgeDetail2Right.x = bodyX + 102;
+            _markBadgeDetail2Right.y = bodyY + 106;
             _markBadgeDetail2Right.visible = _markBadgeExpanded;
-            _markBadgeDetail2RightValue.htmlText = _fmtPlain(_moe[3] > 0 ? _fmtNum(int(_moe[3])) : _strNoData, 12, COLOR_LABEL);
-            _markBadgeDetail2RightValue.x = bodyX + 178 - _valW(_markBadgeDetail2RightValue);
-            _markBadgeDetail2RightValue.y = bodyY + 108;
+            _markBadgeDetail2RightValue.htmlText = _fmtPlain(_moe[3] > 0 ? _fmtNum(int(_moe[3])) : _strNoData, 14, COLOR_LABEL);
+            _markBadgeDetail2RightValue.x = bodyX + 172 - _valW(_markBadgeDetail2RightValue);
+            _markBadgeDetail2RightValue.y = bodyY + 106;
             _markBadgeDetail2RightValue.visible = _markBadgeExpanded;
 
         }
@@ -1276,25 +1275,26 @@ package com.inq.marks
 
         private function _drawStyle3LobbyPanel(g:Graphics, expanded:Boolean, hover:Boolean):void
         {
-            var bodyX:Number = 34;
-            var y:Number     = expanded ? 22 : 0;
+            var bodyX:Number = 28;
+            var y:Number     = 0;
             var w:Number     = 190;
-            var h:Number     = expanded ? 130 : 77;
-            // при наведенні СВІТЛІШЕ (менша непрозорість темного фону), не темніше
-            var alpha:Number = hover ? 0.42 : 0.51;
+            var h:Number     = expanded ? 132 : 54;
+            // Точні RGBA з lobby SWF: normal #000/116, hover #242424/126.
+            var panelColor:uint = hover ? 0x242424 : 0x000000;
+            var alpha:Number = hover ? (126.0 / 255.0) : (116.0 / 255.0);
 
-            var arrowBox:Number = 30;
-            var arrowGap:Number = 3;
+            var arrowBox:Number = 27;
+            var arrowGap:Number = 1;
             var arrowX:Number   = bodyX - arrowGap - arrowBox;
 
             g.lineStyle(NaN);
-            g.beginFill(0x0B1016, alpha);
+            g.beginFill(panelColor, alpha);
             g.drawRect(bodyX, y, w, h);
             g.endFill();
 
             // (сірі "вусика" зверху прибрані)
 
-            g.beginFill(0x0B1016, alpha);
+            g.beginFill(panelColor, alpha);
             g.drawRect(arrowX, y, arrowBox, arrowBox);
             g.endFill();
             g.lineStyle(NaN);
@@ -1319,8 +1319,8 @@ package com.inq.marks
             if (expanded)
             {
                 g.lineStyle(1.0, 0xAEB8C2, 0.5, true);
-                var dx:Number = bodyX + 18;
-                var dxEnd:Number = bodyX + 176;
+                var dx:Number = bodyX + 19;
+                var dxEnd:Number = bodyX + 172;
                 var dyy:Number = y + 78;
                 while (dx < dxEnd)
                 {
@@ -1410,27 +1410,23 @@ package com.inq.marks
             var g:Graphics = _markBadgeLine.graphics;
             g.clear();
             var pct:Number = Math.max(0.0, Math.min(1.0, mark / 100.0));
-            var trackH:Number = 2.0;
-            var ty:Number = yPos + (barH - trackH) / 2;
+            var trackH:Number = 3.0;
+            var ty:Number = yPos - trackH / 2;
             g.lineStyle(NaN);
-            g.beginFill(0x788491, 0.72);
+            // Оригінальний SWF використовує єдиний напівпрозорий трек 150x3.
+            g.beginFill(0xECE2BC, 0.106);
             g.drawRect(x0, ty, w, trackH);
             g.endFill();
-            if (pct > 0)
-            {
-                g.beginFill(0xFFFFFF, 1.0);
-                g.drawRect(x0, ty, Math.max(1.0, w * pct), trackH);
-                g.endFill();
-            }
             var mx:Number = x0 + w * pct;
-            g.lineStyle(1.4, 0xFFFFFF, 0.96, true, "normal", CapsStyle.ROUND);
-            g.moveTo(mx, yPos - 4.5);
-            g.lineTo(mx, yPos + 4.5);
-            g.lineStyle(NaN);
-            g.beginFill(0xFFEECC, 0.96);
-            g.drawCircle(mx, yPos, 1.35);
+            // Центральна капсула та широкий золотистий ореол повторюють
+            // 16x21 bitmap-маркер з gunmarks-lebwa-lobby.swf.
+            g.beginFill(0xFFFFFF, 1.0);
+            g.drawRoundRect(mx - 1.0, yPos - 3.5, 2.0, 7.0, 2.0, 2.0);
             g.endFill();
-            _markBadgeLine.filters = [new GlowFilter(0xFFDF9A, 0.35, 2, 2, 1.0, 1)];
+            _markBadgeLine.filters = [
+                new GlowFilter(0xF6E6C6, 0.70, 5, 9, 1.4, 1),
+                new GlowFilter(0xFFDF9A, 0.28, 12, 16, 1.0, 1)
+            ];
         }
 
         private function _nextMoeTarget(mark:Number):int
