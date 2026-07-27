@@ -36,7 +36,7 @@ package com.inq.marks
         public static const STYLE_MINIMAL:int  = 4;
         public static const STYLE_COUNT:int    = 5;
 
-        private static const W_HTML:int     = 194;
+        private static const W_HTML:int     = 195;
         private static const H_HTML:int     = 100;
         private static const H_HTML_EXP:int = 155;
         private static const HTML_X_SCALE:Number = 1.0;
@@ -634,7 +634,7 @@ package com.inq.marks
             _htmlSumValue.visible = true;
 
             _htmlSumTarget.htmlText = _fmt(" / " + (target > 0 ? _fmtNum(target) : "N/A"), 14, COLOR_LABEL);
-            _htmlSumTarget.x = int(W_HTML - 1 - _htmlSumTarget.width);
+            _htmlSumTarget.x = int(24 + 150 - _htmlSumTarget.width);
             _htmlSumTarget.y = 72;
             _htmlSumTarget.visible = true;
             _htmlSumValue.x = int(_htmlSumTarget.x - _htmlSumValue.width);
@@ -1198,12 +1198,12 @@ package com.inq.marks
             if (isNaN(sideRight)) sideRight = x0 + w + 9.0;
 
             g.lineStyle(1.0, HTML_FRAME_COLOR, 0.48, true);
-            g.moveTo(sideLeft, yPos);
+            g.moveTo(sideLeft + connectorGap, yPos);
             g.lineTo(x0 - connectorGap, yPos);
             g.moveTo(sideLeft, yPos - sideH * 0.5);
             g.lineTo(sideLeft, yPos + sideH * 0.5);
             g.moveTo(x0 + w + connectorGap, yPos);
-            g.lineTo(sideRight, yPos);
+            g.lineTo(sideRight - connectorGap, yPos);
             g.moveTo(sideRight, yPos - sideH * 0.5);
             g.lineTo(sideRight, yPos + sideH * 0.5);
 
