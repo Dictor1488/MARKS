@@ -36,9 +36,9 @@ package com.inq.marks
         public static const STYLE_MINIMAL:int  = 4;
         public static const STYLE_COUNT:int    = 5;
 
-        private static const W_HTML:int     = 198;
-        private static const H_HTML:int     = 103;
-        private static const H_HTML_EXP:int = 157;
+        private static const W_HTML:int     = 190;
+        private static const H_HTML:int     = 100;
+        private static const H_HTML_EXP:int = 155;
         private static const HTML_X_SCALE:Number = 1.0;
         private static const BATTLE_EDGE_GAP:int = 4;
         private static const PAD:int    = 24;
@@ -517,8 +517,9 @@ package com.inq.marks
             g.clear();
 
             // мінімальна radial-підкладка ззаду — робить мітку видимішою в бою
-            var glowW:Number = W_HTML + 80;
-            var glowH:Number = (_expanded ? H_HTML_EXP : H_HTML) + 60;
+            // Габарити растрового glow у battle SWF: 299x214 / 299x284.
+            var glowW:Number = 299;
+            var glowH:Number = _expanded ? 284 : 214;
             var gm:Matrix = new Matrix();
             gm.createGradientBox(glowW, glowH, 0, (W_HTML - glowW) / 2, ((_expanded ? H_HTML_EXP : H_HTML) - glowH) / 2);
             g.beginGradientFill(GradientType.RADIAL,
@@ -542,7 +543,7 @@ package com.inq.marks
                 _targetLine.graphics.clear();
                 _arrow.graphics.clear();
                 _value.htmlText = _fmtTitle("-- --", 28, COLOR_LABEL);
-                _value.x = 5;
+                _value.x = 6;
                 _value.y = 14;
                 _total.htmlText = _fmt("\u041f\u0440\u043e\u0432\u0435\u0434\u0456\u0442\u044c \u0431\u0456\u043b\u044c\u0448\u0435 \u0431\u043e\u0457\u0432", 11, COLOR_LABEL);
                 _total.x = 6;
@@ -565,21 +566,19 @@ package com.inq.marks
             {
                 sg.lineStyle(1.0, FRAME_COLOR, 0.55, true);
                 sg.beginFill(i < filled ? 0xFFFFFF : 0x27313C, 1.0);
-                _starPath(sg, 84 + i * 15, 0, 7, 3.0);
+                _starPath(sg, 81 + i * 19, 2, 7, 3.0);
                 sg.endFill();
             }
 
             _value.htmlText = _fmtTitle(_fmt2(projMark) + "%", 28, COLOR_LABEL);
-            _value.x = 14;
             _value.y = 14;
 
             var deltaStr:String = (kind == 0) ? "" :
                 ((delta > 0 ? "+" : "-") + _fmt2(Math.abs(delta)) + "%");
             if (deltaStr.length > 0)
             {
-                // delta-число — сіре (як "Загалом"), не червоне/зелене
-                _delta.htmlText = _fmt(deltaStr, 16, COLOR_DIM);
-                _delta.x = 122;
+                // В оригінальному battle SWF дельта біла; напрямок задає стрілка.
+                _delta.htmlText = _fmt(deltaStr, 16, COLOR_LABEL);
                 _delta.y = 23;
                 _delta.visible = true;
             }
@@ -587,16 +586,31 @@ package com.inq.marks
             {
                 _delta.visible = false;
             }
-            _drawTrendArrow(112, 31, kind);
+            // Оригінал центрує весь блок: відсоток + стрілка + дельта.
+            var arrowW:Number = kind == 0 ? 0 : 7;
+            var deltaW:Number = _delta.visible ? _delta.width : 0;
+            var blockW:Number = _value.width + (kind == 0 ? 0 : (10 + arrowW + 5 + deltaW));
+            var blockX:Number = int((W_HTML - blockW) / 2) + 5;
+            _value.x = blockX;
+            if (kind != 0)
+            {
+                var arrowCX:Number = blockX + _value.width + 10 + arrowW / 2;
+                _drawTrendArrow(arrowCX, 31, kind);
+                _delta.x = arrowCX + arrowW / 2 + 5;
+            }
+            else
+            {
+                _arrow.graphics.clear();
+            }
 
             var nearestIdx:int = _nearestMilestone(projMark);
             var nearestDmg:int = _milestoneRequiredDamage(nearestIdx);
             var target:int     = _baseDamage > 0 ? _baseDamage : nearestDmg;
-            _drawForecastMarkBarSquare(_line, projMark, delta, 24, 150, 58, 4.0, 0, W_HTML);
+            _drawForecastMarkBarSquare(_line, projMark, delta, 26, 148, 58, 5.0, 0, W_HTML);
             _drawStyle3DetailLine(_expanded);
 
             var currentColor:uint = kind > 0 ? HTML_GREEN : (kind < 0 ? (_currentDamage < 0 ? 0x9F84D6 : HTML_RED) : COLOR_LABEL);
-            _total.htmlText = _fmt(_strSumLabel(), 14, COLOR_DIM);
+            _total.htmlText = _fmt(_strSumLabel(), 14, COLOR_LABEL);
             _total.x = 24;
             _total.y = 72;
             _total.visible = true;
@@ -619,22 +633,22 @@ package com.inq.marks
                 var tempoPct:int = projMark > 0 ? int(Math.ceil(projMark)) : 55;
                 if (tempoPct < 55) tempoPct = 55;
                 _targetLabel.htmlText =
-                    _fmt("\u0422\u0435\u043c\u043f \u0434\u043b\u044f " + tempoPct.toString() + "%", 14, COLOR_DIM);
+                    _fmt("\u0422\u0435\u043c\u043f \u0434\u043b\u044f " + tempoPct.toString() + "%", 14, COLOR_LABEL);
                 _targetLabel.x = 24;
                 _targetLabel.y = 105;
                 _targetLabel.visible = true;
                 _htmlTempoValue1.htmlText = _fmt(target > 0 ? _fmtNum(target) : "N/A", 14, COLOR_LABEL);
-                _htmlTempoValue1.x = int(177 - _htmlTempoValue1.width);
+                _htmlTempoValue1.x = int(175 - _htmlTempoValue1.width);
                 _htmlTempoValue1.y = 105;
                 _htmlTempoValue1.visible = true;
 
                 _targetDmg.htmlText =
-                    _fmt("\u0422\u0435\u043c\u043f \u0434\u043b\u044f " + milestonePct.toFixed(0) + "%", 14, COLOR_DIM);
+                    _fmt("\u0422\u0435\u043c\u043f \u0434\u043b\u044f " + milestonePct.toFixed(0) + "%", 14, COLOR_LABEL);
                 _targetDmg.x = 24;
                 _targetDmg.y = 127;
                 _targetDmg.visible = true;
                 _htmlTempoValue2.htmlText = _fmt(milestoneDmg > 0 ? _fmtNum(milestoneDmg) : "N/A", 14, COLOR_LABEL);
-                _htmlTempoValue2.x = int(177 - _htmlTempoValue2.width);
+                _htmlTempoValue2.x = int(175 - _htmlTempoValue2.width);
                 _htmlTempoValue2.y = 127;
                 _htmlTempoValue2.visible = true;
             }
@@ -655,15 +669,13 @@ package com.inq.marks
             var x:Number = 0;
             var y:Number = 0;
             var w:Number = W_HTML;
-            var h:Number = expanded ? 164 : 110;
+            var h:Number = expanded ? H_HTML_EXP : H_HTML;
             var r:Number = 9;
             var topSeg:Number = 58;
             var sGap:Number = 5;
             var barY:Number = 58;
             var connLen:Number = 14;
             var connCapH:Number = 22;
-            h = expanded ? H_HTML_EXP : H_HTML;
-
             // кути — товщі в 2 рази
             g.lineStyle(2.1, HTML_FRAME_LIGHT, 0.37, true);
             _style3Corner(g, x, y, r, 0);
@@ -694,7 +706,7 @@ package com.inq.marks
             if (!expanded) return;
             g.lineStyle(1.0, HTML_FRAME_COLOR, 0.34, true);
             g.moveTo(24, 99);
-            g.lineTo(174, 99);
+            g.lineTo(175, 99);
             g.lineStyle(NaN);
         }
 
@@ -1163,7 +1175,10 @@ package com.inq.marks
             var pct:Number = isNaN(mark) ? 0.0 : Math.max(0.0, Math.min(1.0, mark / 100.0));
             var color:uint = delta > 0.005 ? HTML_GREEN :
                              (delta < -0.005 ? HTML_BAR_RED : COLOR_LABEL);
-            var top:Number = yPos - barH / 2;
+            // У Lebwa yPos — верх кольорової смуги; незаповнена частина
+            // лишається прозорою, поверх неї видно тільки тонкий трек.
+            var top:Number = yPos;
+            var centerY:Number = top + barH / 2;
             var sideH:Number = 18.0;
             var smallH:Number = 8.0;
             var frameSideTicks:Boolean = !isNaN(sideLeft) && !isNaN(sideRight);
@@ -1172,11 +1187,9 @@ package com.inq.marks
 
             g.lineStyle(1.0, HTML_FRAME_COLOR, 0.48, true);
             g.moveTo(sideLeft, yPos);
-            g.lineTo(x0, yPos);
+            g.lineTo(sideRight, yPos);
             g.moveTo(sideLeft, yPos - sideH * 0.5);
             g.lineTo(sideLeft, yPos + sideH * 0.5);
-            g.moveTo(x0 + w, yPos);
-            g.lineTo(sideRight, yPos);
             g.moveTo(sideRight, yPos - sideH * 0.5);
             g.lineTo(sideRight, yPos + sideH * 0.5);
 
@@ -1189,10 +1202,7 @@ package com.inq.marks
                 g.lineTo(x0 + w, yPos + smallH * 0.5);
             }
 
-            // трек бару — ПРОЗОРИЙ (тонка світла лінія, видно фон крізь неї)
-            g.beginFill(0xCCCCCC, 0.30);
-            g.drawRect(x0, top, w, barH);
-            g.endFill();
+            // Без сірої підкладки: трек повністю прозорий.
             g.lineStyle(NaN);
 
             if (pct > 0)
@@ -1202,10 +1212,16 @@ package com.inq.marks
                 g.endFill();
             }
 
-            // маркер — тонка біла риска на межі заповнення
+            // 16x23-подібний glow-маркер з battle SWF.
             var mx:Number = x0 + w * pct;
-            g.beginFill(0xFEFEFE, 1.0);
-            g.drawRect(mx - 1.0, yPos - 5.5, 2.0, 11.0);
+            g.beginFill(color, 0.06);
+            g.drawEllipse(mx - 8.0, centerY - 11.5, 16.0, 23.0);
+            g.endFill();
+            g.beginFill(color, 0.18);
+            g.drawEllipse(mx - 4.0, centerY - 8.0, 8.0, 16.0);
+            g.endFill();
+            g.beginFill(0xFFFFFF, 1.0);
+            g.drawRoundRect(mx - 1.0, centerY - 3.5, 2.0, 7.0, 2.0, 2.0);
             g.endFill();
 
             g.lineStyle(NaN);
