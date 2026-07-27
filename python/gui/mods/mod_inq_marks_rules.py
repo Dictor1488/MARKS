@@ -19,10 +19,10 @@ except ImportError:
     import mod_inq_marks as marks
 
 
-_VALID_STYLES = ('classic', 'compact', 'polaroid', 'minimal')
-_GARAGE_STYLES = ('classic', 'compact', 'polaroid')
-_DEFAULT_STYLE = 'classic'
-_STYLE_HINT = 'classic | compact | polaroid | minimal'
+_VALID_STYLES = ('compact', 'polaroid', 'neer', 'minimal')
+_GARAGE_STYLES = ('compact', 'polaroid')
+_DEFAULT_STYLE = 'compact'
+_STYLE_HINT = 'compact | polaroid | neer | minimal'
 
 
 def _minimalConfig(style):
