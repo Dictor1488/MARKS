@@ -1,0 +1,158 @@
+name: Temporary minimal Marks config patch
+
+on:
+  pull_request:
+    types: [opened, synchronize]
+    branches: [main]
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    if: github.event.pull_request.head.repo.full_name == github.repository && github.head_ref == 'agent/minimal-marks-config'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref }}
+          fetch-depth: 0
+
+      - name: Patch native config handling
+        shell: python
+        run: |
+          from pathlib import Path
+
+          path = Path('python/gui/mods/mod_inq_marks.py')
+          text = path.read_text(encoding='utf-8')
+
+          old_import = 'from collections import deque'
+          new_import = 'from collections import deque, OrderedDict'
+          if old_import not in text:
+              raise RuntimeError('collections import not found')
+          text = text.replace(old_import, new_import, 1)
+
+          constants_start = text.index('_CONFIG_DEFAULTS = {')
+          constants_end = text.index('_CONFIG_BADGE_STYLES = {', constants_start)
+          constants = '''_VALID_BATTLE_STYLES = ('classic', 'compact', 'polaroid', 'neer')
+          _GARAGE_STYLES = ('classic', 'compact', 'polaroid')
+          _DEFAULT_BATTLE_STYLE = 'classic'
+          _CONFIG_STYLE_HINT = 'classic | compact | polaroid | neer'
+
+          '''
+          text = text[:constants_start] + constants + text[constants_end:]
+
+          config_start = text.index('def _loadConfigFile():')
+          config_end = text.index('\ndef _isCloseBrowserMethod', config_start)
+          config_code = '''def _minimalConfig(style):
+              return OrderedDict((
+                  ('battleBadgeStyle', style),
+                  ('_hint', _CONFIG_STYLE_HINT),
+              ))
+
+
+          def _loadConfigFile():
+              _ensureConfigDir()
+              loaded = {}
+              if os.path.isfile(_CONFIG_FILE):
+                  try:
+                      with open(_CONFIG_FILE, 'rb') as fh:
+                          loaded = json.load(fh)
+                      if not isinstance(loaded, dict):
+                          loaded = {}
+                  except Exception:
+                      loaded = {}
+
+              style = _safeLower(loaded.get('battleBadgeStyle'))
+              if style not in _VALID_BATTLE_STYLES:
+                  style = _safeLower(loaded.get('badgeStyle'))
+              if style not in _VALID_BATTLE_STYLES:
+                  style = _safeLower(loaded.get('garageBadgeStyle'))
+              if style not in _VALID_BATTLE_STYLES:
+                  style = _DEFAULT_BATTLE_STYLE
+
+              config = _minimalConfig(style)
+              if loaded != config:
+                  try:
+                      with open(_CONFIG_FILE, 'wb') as fh:
+                          json.dump(config, fh, indent=4)
+                  except Exception:
+                      logger.exception('config: failed to write minimal battle style config')
+              return config
+
+          '''
+          # Strip indentation introduced by the YAML block while preserving Python nesting.
+          import textwrap
+          config_code = textwrap.dedent(config_code)
+          text = text[:config_start] + config_code + text[config_end + 1:]
+
+          class_start = text.index('class InqMarksController(object):')
+          load_start = text.index('    def _loadConfig(self):', class_start)
+          load_end = text.index('\n    def ', load_start + 1)
+          load_code = '''    def _loadConfig(self):
+              config = _loadConfigFile()
+              style = _safeLower(config.get('battleBadgeStyle'))
+              if style not in _VALID_BATTLE_STYLES:
+                  style = _DEFAULT_BATTLE_STYLE
+
+              styleID = int(_CONFIG_BADGE_STYLES.get(style, 0))
+              self._configEnabled = True
+              self._configMarkBadge = True
+              self._configPanelBodyVisible = False
+              self._configBadgeStyle = styleID
+              self._configBattleBadgeStyle = styleID
+              self._garageBadgeEnabled = style in _GARAGE_STYLES
+              self._markBadgeOpen = True
+              self._battleBadgeEnabled = True
+
+          '''
+          load_code = textwrap.dedent(load_code)
+          # Re-indent the class method after dedenting the multiline literal.
+          load_code = ''.join(('    ' + line if line.strip() else line) for line in load_code.splitlines(True))
+          text = text[:load_start] + load_code + text[load_end + 1:]
+
+          init_marker = '        self._battleBadgeEnabled   = True\n'
+          if init_marker in text and '        self._garageBadgeEnabled   = True\n' not in text:
+              text = text.replace(
+                  init_marker,
+                  init_marker + '        self._garageBadgeEnabled   = True\n',
+                  1,
+              )
+
+          visibility_start = text.index('    def _updateVisibility(self):', class_start)
+          visibility_end = text.index('\n    def ', visibility_start + 1)
+          visibility = text[visibility_start:visibility_end]
+          old_visible = '        visible = bool(self._configEnabled\n'
+          new_visible = "        visible = bool(getattr(self, '_garageBadgeEnabled', True)\n                       and self._configEnabled\n"
+          if old_visible not in visibility:
+              raise RuntimeError('garage visibility expression not found')
+          visibility = visibility.replace(old_visible, new_visible, 1)
+          text = text[:visibility_start] + visibility + text[visibility_end:]
+
+          path.write_text(text, encoding='utf-8')
+
+      - name: Validate config implementation
+        shell: python
+        run: |
+          from pathlib import Path
+          main = Path('python/gui/mods/mod_inq_marks.py').read_text(encoding='utf-8')
+          early = Path('python/gui/mods/mod_00_inq_marks_config.py').read_text(encoding='utf-8')
+          rules = Path('python/gui/mods/mod_inq_marks_rules.py').read_text(encoding='utf-8')
+          for source in (main, early, rules):
+              assert "('classic', 'compact', 'polaroid', 'neer')" in source
+              assert "'battleBadgeStyle'" in source
+          assert "'garageBadgeStyles'" not in early
+          assert "'battleBadgeStyles'" not in early
+          assert "config.get('battleBadgeStyle')" in main
+          assert "_garageBadgeEnabled = style in _GARAGE_STYLES" in main
+
+      - name: Remove helper and commit
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git rm -f .github/workflows/temp-minimal-marks-config.yml
+          git add python/gui/mods/mod_00_inq_marks_config.py
+          git add python/gui/mods/mod_inq_marks.py
+          git add python/gui/mods/mod_inq_marks_rules.py
+          git commit -m "Use minimal Marks battle style config"
+          git push origin HEAD:${{ github.head_ref }}
