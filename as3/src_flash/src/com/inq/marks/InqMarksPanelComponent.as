@@ -1026,12 +1026,12 @@ package com.inq.marks
             var g:Graphics = _markBadgeBg.graphics;
             g.clear();
             if (_markBadgeCurrentValue) _markBadgeCurrentValue.visible = false;
-            if (_markBadgeDetail1Right) _markBadgeDetail1Right.visible = false;
-            if (_markBadgeDetail2Right) _markBadgeDetail2Right.visible = false;
-            if (_markBadgeDetail1Value) _markBadgeDetail1Value.visible = false;
-            if (_markBadgeDetail2Value) _markBadgeDetail2Value.visible = false;
-            if (_markBadgeDetail1RightValue) _markBadgeDetail1RightValue.visible = false;
-            if (_markBadgeDetail2RightValue) _markBadgeDetail2RightValue.visible = false;
+            if (_markBadgeDetail1Right) _markBadgeDetail1Right.visible = _markBadgeExpanded;
+            if (_markBadgeDetail2Right) _markBadgeDetail2Right.visible = _markBadgeExpanded;
+            if (_markBadgeDetail1Value) _markBadgeDetail1Value.visible = _markBadgeExpanded;
+            if (_markBadgeDetail2Value) _markBadgeDetail2Value.visible = _markBadgeExpanded;
+            if (_markBadgeDetail1RightValue) _markBadgeDetail1RightValue.visible = _markBadgeExpanded;
+            if (_markBadgeDetail2RightValue) _markBadgeDetail2RightValue.visible = _markBadgeExpanded;
 
             g.lineStyle(0, 0x000000, 0.0);
             g.beginFill(0x05080C, 0.16);
@@ -1102,7 +1102,6 @@ package com.inq.marks
             g.lineStyle(1.0, 0x707780, 0.42, true);
             g.beginFill(0x11161C, 0.72);
             g.drawRoundRect(8, 10, 25, 28, 6, 6);
-            g.drawRoundRect(8, 48, 25, 28, 6, 6);
             g.endFill();
             g.lineStyle(1.4, 0xD9DEE3, 0.82, true);
             if (_markBadgeExpanded)
@@ -1113,10 +1112,6 @@ package com.inq.marks
             {
                 g.moveTo(17, 22); g.lineTo(20.5, 26); g.lineTo(24, 22);
             }
-            g.lineStyle(1.2, 0xFFFFFF, 0.90, true);
-            g.moveTo(16, 68); g.lineTo(16, 64);
-            g.moveTo(20, 68); g.lineTo(20, 61);
-            g.moveTo(24, 68); g.lineTo(24, 65);
             g.lineStyle(NaN);
 
             var mark:Number = isNaN(_currentMark) ? 0.0 : _currentMark;
@@ -1135,7 +1130,7 @@ package com.inq.marks
             sg.lineStyle(NaN);
 
             var contentX:int = 43;
-            var contentR:int = badgeW - 11;
+            var contentR:int = badgeW - 15;
             var currentDamage:int = _estimateCurrentDamage(mark);
 
             _markBadgeValue.htmlText = _fmtTitle(_fmt2(mark) + "%", 20, COLOR_LABEL);
@@ -1176,21 +1171,39 @@ package com.inq.marks
             _markBadgeTotal.y = 55;
             _markBadgeTotal.visible = true;
 
-            _markBadgeDetail1.htmlText = _fmt("65%", 15, COLOR_LABEL_SOFT) + " " +
-                _fmt(_moe[0] > 0 ? _fmtNum(int(_moe[0])) : _strNoData, 15, COLOR_LABEL) +
-                _fmt("   85%", 15, COLOR_LABEL_SOFT) + " " +
-                _fmt(_moe[1] > 0 ? _fmtNum(int(_moe[1])) : _strNoData, 15, COLOR_LABEL);
-            _markBadgeDetail1.x = int(badgeW / 2 - _markBadgeDetail1.width / 2);
+            _markBadgeDetail1.htmlText = _fmt("65%", 14, COLOR_LABEL_SOFT);
+            _markBadgeDetail1.x = 64;
             _markBadgeDetail1.y = 88;
             _markBadgeDetail1.visible = _markBadgeExpanded;
+            _markBadgeDetail1Value.htmlText =
+                _fmt(_moe[0] > 0 ? _fmtNum(int(_moe[0])) : _strNoData, 14, COLOR_LABEL);
+            _markBadgeDetail1Value.x = 95;
+            _markBadgeDetail1Value.y = 88;
 
-            _markBadgeDetail2.htmlText = _fmt("95%", 15, COLOR_LABEL_SOFT) + " " +
-                _fmt(_moe[2] > 0 ? _fmtNum(int(_moe[2])) : _strNoData, 15, COLOR_LABEL) +
-                _fmt("   100%", 15, COLOR_LABEL_SOFT) + " " +
-                _fmt(_moe[3] > 0 ? _fmtNum(int(_moe[3])) : _strNoData, 15, COLOR_LABEL);
-            _markBadgeDetail2.x = int(badgeW / 2 - _markBadgeDetail2.width / 2);
+            _markBadgeDetail2.htmlText = _fmt("95%", 14, COLOR_LABEL_SOFT);
+            _markBadgeDetail2.x = 64;
             _markBadgeDetail2.y = 110;
             _markBadgeDetail2.visible = _markBadgeExpanded;
+            _markBadgeDetail2Value.htmlText =
+                _fmt(_moe[2] > 0 ? _fmtNum(int(_moe[2])) : _strNoData, 14, COLOR_LABEL);
+            _markBadgeDetail2Value.x = 95;
+            _markBadgeDetail2Value.y = 110;
+
+            _markBadgeDetail1Right.htmlText = _fmt("85%", 14, COLOR_LABEL_SOFT);
+            _markBadgeDetail1Right.x = 141;
+            _markBadgeDetail1Right.y = 88;
+            _markBadgeDetail1RightValue.htmlText =
+                _fmt(_moe[1] > 0 ? _fmtNum(int(_moe[1])) : _strNoData, 14, COLOR_LABEL);
+            _markBadgeDetail1RightValue.x = int(contentR - _markBadgeDetail1RightValue.width);
+            _markBadgeDetail1RightValue.y = 88;
+
+            _markBadgeDetail2Right.htmlText = _fmt("100%", 14, COLOR_LABEL_SOFT);
+            _markBadgeDetail2Right.x = 134;
+            _markBadgeDetail2Right.y = 110;
+            _markBadgeDetail2RightValue.htmlText =
+                _fmt(_moe[3] > 0 ? _fmtNum(int(_moe[3])) : _strNoData, 14, COLOR_LABEL);
+            _markBadgeDetail2RightValue.x = int(contentR - _markBadgeDetail2RightValue.width);
+            _markBadgeDetail2RightValue.y = 110;
         }
 
         private function _redrawMarkBadgeCompactLegacy():void

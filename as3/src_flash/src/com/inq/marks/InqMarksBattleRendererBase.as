@@ -895,7 +895,7 @@ package com.inq.marks
                 ((delta > 0 ? "+" : "-") + _fmt2(Math.abs(delta)) + "%");
             if (deltaStr.length > 0)
             {
-                _delta.htmlText = _fmt(deltaStr, 14, 0xFFFFFF);
+                _delta.htmlText = _fmt(deltaStr, 15, 0xFFFFFF);
                 _delta.x = 58;
                 _delta.y = 20;
                 _delta.visible = true;
@@ -953,19 +953,22 @@ package com.inq.marks
             {
                 var milestoneIdx:int    = _nearestMilestone(projMark);
                 var milestonePct:Number = Number(MILESTONE_PCTS[milestoneIdx]);
-                var milestoneColor:uint = milestoneIdx == 0 ? 0xB8C4CC :
-                                    (milestoneIdx == 1 ? 0xE0E0E0 : 0xE6D8A0);
                 var milestoneDmg:int    = _milestoneRequiredDamage(milestoneIdx);
                 var pctStr:String = milestonePct.toFixed(0) + "%";
                 var dmgStr:String = _fmtNum(milestoneDmg);
-                _targetDmg.htmlText = _fmt(pctStr + "  " + dmgStr, 15, milestoneColor);
-                _targetDmg.x = int(W / 2 - _targetDmg.width / 2);
+                _targetDmg.htmlText = _fmt(pctStr, 15, 0xFFFFFF);
+                _targetDmg.x = contentX;
                 _targetDmg.y = 95;
                 _targetDmg.visible = true;
+                _htmlTempoValue1.htmlText = _fmt(dmgStr, 15, 0xFFFFFF);
+                _htmlTempoValue1.x = int(contentR - _htmlTempoValue1.width);
+                _htmlTempoValue1.y = 95;
+                _htmlTempoValue1.visible = true;
             }
             else
             {
                 _targetDmg.visible = false;
+                _htmlTempoValue1.visible = false;
             }
         }
 
