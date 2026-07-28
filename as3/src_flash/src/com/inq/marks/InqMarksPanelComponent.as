@@ -1026,12 +1026,12 @@ package com.inq.marks
             var g:Graphics = _markBadgeBg.graphics;
             g.clear();
             if (_markBadgeCurrentValue) _markBadgeCurrentValue.visible = false;
-            if (_markBadgeDetail1Right) _markBadgeDetail1Right.visible = _markBadgeExpanded;
-            if (_markBadgeDetail2Right) _markBadgeDetail2Right.visible = _markBadgeExpanded;
-            if (_markBadgeDetail1Value) _markBadgeDetail1Value.visible = _markBadgeExpanded;
-            if (_markBadgeDetail2Value) _markBadgeDetail2Value.visible = _markBadgeExpanded;
-            if (_markBadgeDetail1RightValue) _markBadgeDetail1RightValue.visible = _markBadgeExpanded;
-            if (_markBadgeDetail2RightValue) _markBadgeDetail2RightValue.visible = _markBadgeExpanded;
+            if (_markBadgeDetail1Right) _markBadgeDetail1Right.visible = false;
+            if (_markBadgeDetail2Right) _markBadgeDetail2Right.visible = false;
+            if (_markBadgeDetail1Value) _markBadgeDetail1Value.visible = false;
+            if (_markBadgeDetail2Value) _markBadgeDetail2Value.visible = false;
+            if (_markBadgeDetail1RightValue) _markBadgeDetail1RightValue.visible = false;
+            if (_markBadgeDetail2RightValue) _markBadgeDetail2RightValue.visible = false;
 
             g.lineStyle(0, 0x000000, 0.0);
             g.beginFill(0x05080C, 0.16);
@@ -1087,12 +1087,12 @@ package com.inq.marks
             g.clear();
 
             if (_markBadgeCurrentValue) _markBadgeCurrentValue.visible = false;
-            if (_markBadgeDetail1Right) _markBadgeDetail1Right.visible = false;
-            if (_markBadgeDetail2Right) _markBadgeDetail2Right.visible = false;
-            if (_markBadgeDetail1Value) _markBadgeDetail1Value.visible = false;
-            if (_markBadgeDetail2Value) _markBadgeDetail2Value.visible = false;
-            if (_markBadgeDetail1RightValue) _markBadgeDetail1RightValue.visible = false;
-            if (_markBadgeDetail2RightValue) _markBadgeDetail2RightValue.visible = false;
+            if (_markBadgeDetail1Right) _markBadgeDetail1Right.visible = _markBadgeExpanded;
+            if (_markBadgeDetail2Right) _markBadgeDetail2Right.visible = _markBadgeExpanded;
+            if (_markBadgeDetail1Value) _markBadgeDetail1Value.visible = _markBadgeExpanded;
+            if (_markBadgeDetail2Value) _markBadgeDetail2Value.visible = _markBadgeExpanded;
+            if (_markBadgeDetail1RightValue) _markBadgeDetail1RightValue.visible = _markBadgeExpanded;
+            if (_markBadgeDetail2RightValue) _markBadgeDetail2RightValue.visible = _markBadgeExpanded;
 
             g.lineStyle(1.0, 0x59616A, 0.48, true);
             g.beginFill(0x080B0F, 0.72);
@@ -1172,25 +1172,25 @@ package com.inq.marks
             _markBadgeTotal.visible = true;
 
             _markBadgeDetail1.htmlText = _fmt("65%", 14, COLOR_LABEL_SOFT);
-            _markBadgeDetail1.x = 64;
+            _markBadgeDetail1.x = contentX;
             _markBadgeDetail1.y = 88;
             _markBadgeDetail1.visible = _markBadgeExpanded;
             _markBadgeDetail1Value.htmlText =
                 _fmt(_moe[0] > 0 ? _fmtNum(int(_moe[0])) : _strNoData, 14, COLOR_LABEL);
-            _markBadgeDetail1Value.x = 95;
+            _markBadgeDetail1Value.x = contentX + 32;
             _markBadgeDetail1Value.y = 88;
 
             _markBadgeDetail2.htmlText = _fmt("95%", 14, COLOR_LABEL_SOFT);
-            _markBadgeDetail2.x = 64;
+            _markBadgeDetail2.x = contentX;
             _markBadgeDetail2.y = 110;
             _markBadgeDetail2.visible = _markBadgeExpanded;
             _markBadgeDetail2Value.htmlText =
                 _fmt(_moe[2] > 0 ? _fmtNum(int(_moe[2])) : _strNoData, 14, COLOR_LABEL);
-            _markBadgeDetail2Value.x = 95;
+            _markBadgeDetail2Value.x = contentX + 32;
             _markBadgeDetail2Value.y = 110;
 
             _markBadgeDetail1Right.htmlText = _fmt("85%", 14, COLOR_LABEL_SOFT);
-            _markBadgeDetail1Right.x = 141;
+            _markBadgeDetail1Right.x = 135;
             _markBadgeDetail1Right.y = 88;
             _markBadgeDetail1RightValue.htmlText =
                 _fmt(_moe[1] > 0 ? _fmtNum(int(_moe[1])) : _strNoData, 14, COLOR_LABEL);
@@ -1198,7 +1198,7 @@ package com.inq.marks
             _markBadgeDetail1RightValue.y = 88;
 
             _markBadgeDetail2Right.htmlText = _fmt("100%", 14, COLOR_LABEL_SOFT);
-            _markBadgeDetail2Right.x = 134;
+            _markBadgeDetail2Right.x = 128;
             _markBadgeDetail2Right.y = 110;
             _markBadgeDetail2RightValue.htmlText =
                 _fmt(_moe[3] > 0 ? _fmtNum(int(_moe[3])) : _strNoData, 14, COLOR_LABEL);
