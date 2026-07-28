@@ -525,6 +525,7 @@ package com.inq.marks
 
         // ── compact style (зірки+смужки зліва, як на макеті) ─────────────────
         private static const COMPACT_DIM_WHITE:uint = 0xCED6DE;
+        private static const COMPACT_GREEN:uint = 0x8FEC55;
 
         private function _drawHtmlStyle():void
         {
@@ -837,7 +838,7 @@ package com.inq.marks
             g.clear();
             // без рамки — тільки підтемнення фону, щоб текст не губився
             g.lineStyle(NaN);
-            g.beginFill(0x0A0E14, 0.18);
+            g.beginFill(0x0A0E14, 0.14);
             g.drawRoundRect(0, 0, W, h, 8, 8);
             g.endFill();
 
@@ -887,14 +888,14 @@ package com.inq.marks
             var contentR:int = W - 12;
 
             // ── діагональна стрілка тренду ──
-            _drawTrendArrow(47, 22, kind);
+            _drawTrendArrow(48, 21, kind);
 
             // ── дельта (13px, читабельна) ──
             var deltaStr:String = (kind == 0) ? "" :
                 ((delta > 0 ? "+" : "-") + _fmt2(Math.abs(delta)) + "%");
             if (deltaStr.length > 0)
             {
-                _delta.htmlText = _fmt(deltaStr, 13, kind > 0 ? HTML_GREEN : HTML_RED);
+                _delta.htmlText = _fmt(deltaStr, 13, 0xFFFFFF);
                 _delta.x = 58;
                 _delta.y = 20;
                 _delta.visible = true;
@@ -925,12 +926,14 @@ package com.inq.marks
             _drawSegmentBar(_line, startMark / 100.0, kind, contentX, contentR - contentX, 48);
 
             // ── "Загалом" + "cur / req" (обидва приглушено-білі) ──
-            _total.htmlText = _fmt(_fmtNum(current), 12, COLOR_LABEL) +
+            var currentColor:uint = kind > 0 ? COMPACT_GREEN :
+                                    (kind < 0 ? HTML_RED : COLOR_LABEL);
+            _total.htmlText = _fmt(_fmtNum(current), 12, currentColor) +
                     _fmt(" / " + (target > 0 ? _fmtNum(target) : "N/A"), 12, 0xE2E8EE);
             _total.x = int(contentR - _total.width);
             _total.y = 66;
 
-            _targetLabel.htmlText = _fmt(_strSumLabel(), 12, 0xE2E8EE);
+            _targetLabel.htmlText = _fmt(_strSumLabel(), 12, 0xFFFFFF);
             _targetLabel.x = contentX;
             _targetLabel.y = 66;
             _targetLabel.visible = true;
@@ -1045,7 +1048,7 @@ package com.inq.marks
             var gap:Number  = 2;
             var barH:Number = 4;
             var segW:Number = (w - (segs - 1) * gap) / segs;
-            var fillCol:uint = kind >= 0 ? HTML_GREEN : HTML_BAR_RED;
+            var fillCol:uint = kind >= 0 ? COMPACT_GREEN : HTML_BAR_RED;
             var filledLen:Number = w * Math.max(0.0, Math.min(1.0, pct));
             for (var i:int = 0; i < segs; i++)
             {
@@ -1079,7 +1082,7 @@ package com.inq.marks
                 return;
             }
             var col:uint = (_style == STYLE_POLAROID || _style == STYLE_COMPACT)
-                ? (kind > 0 ? HTML_GREEN : HTML_ARROW_RED)
+                ? (kind > 0 ? (_style == STYLE_COMPACT ? COMPACT_GREEN : HTML_GREEN) : HTML_ARROW_RED)
                 : (kind > 0 ? ARROW_UP : ARROW_DOWN);
             var sz:Number = 7;
             g.lineStyle(1.8, col, 1.0, true, "normal", CapsStyle.ROUND);
