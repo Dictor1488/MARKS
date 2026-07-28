@@ -796,6 +796,9 @@ package com.inq.marks
         private static const MARK_BADGE_W:int = 198;
         private static const MARK_BADGE_H:int = 86;
         private static const MARK_BADGE_H_EXP:int = 132;
+        private static const MARK_BADGE_W_COMPACT:int = 230;
+        private static const MARK_BADGE_H_COMPACT:int = 86;
+        private static const MARK_BADGE_H_COMPACT_EXP:int = 132;
         private static const MARK_BADGE_HTML_SCALE:Number = 1.0;
         private static const MARK_BADGE_W_HTML:int = 218;
         private static const MARK_BADGE_H_HTML:int = 54;
@@ -803,9 +806,18 @@ package com.inq.marks
         private static const MARK_BADGE_PAD:int = 24;
         private static const MARK_BADGE_GAP:int = 8;
 
-        private function _mbW():int { return _markBadgeStyle == 2 ? MARK_BADGE_W_HTML : MARK_BADGE_W; }
-        private function _mbH():int { return _markBadgeStyle == 2 ? MARK_BADGE_H_HTML : MARK_BADGE_H; }
-        private function _mbHExp():int { return _markBadgeStyle == 2 ? MARK_BADGE_H_HTML_EXP : MARK_BADGE_H_EXP; }
+        private function _mbW():int {
+            return _markBadgeStyle == 2 ? MARK_BADGE_W_HTML :
+                   (_markBadgeStyle == 1 ? MARK_BADGE_W_COMPACT : MARK_BADGE_W);
+        }
+        private function _mbH():int {
+            return _markBadgeStyle == 2 ? MARK_BADGE_H_HTML :
+                   (_markBadgeStyle == 1 ? MARK_BADGE_H_COMPACT : MARK_BADGE_H);
+        }
+        private function _mbHExp():int {
+            return _markBadgeStyle == 2 ? MARK_BADGE_H_HTML_EXP :
+                   (_markBadgeStyle == 1 ? MARK_BADGE_H_COMPACT_EXP : MARK_BADGE_H_EXP);
+        }
         private function _mbCurH():int { return _markBadgeExpanded ? _mbHExp() : _mbH(); }
 
         private function _createMarkBadgeBtn():void
@@ -922,7 +934,7 @@ package com.inq.marks
         {
             if (!_markBadgeBtn) return;
             _markBadgeBtn.visible = _visibleState && _markBadgeEnabled &&
-                _markBadgeStyle != 2 && _markBadgeControlVisible;
+                _markBadgeStyle == 0 && _markBadgeControlVisible;
             var btnGlobal:Point;
             if (_markBadgeOpen)
             {
@@ -1068,6 +1080,120 @@ package com.inq.marks
         }
 
         private function _redrawMarkBadgeCompact():void
+        {
+            var badgeW:int = MARK_BADGE_W_COMPACT;
+            var badgeH:int = _markBadgeExpanded ? MARK_BADGE_H_COMPACT_EXP : MARK_BADGE_H_COMPACT;
+            var g:Graphics = _markBadgeBg.graphics;
+            g.clear();
+
+            if (_markBadgeCurrentValue) _markBadgeCurrentValue.visible = false;
+            if (_markBadgeDetail1Right) _markBadgeDetail1Right.visible = false;
+            if (_markBadgeDetail2Right) _markBadgeDetail2Right.visible = false;
+            if (_markBadgeDetail1Value) _markBadgeDetail1Value.visible = false;
+            if (_markBadgeDetail2Value) _markBadgeDetail2Value.visible = false;
+            if (_markBadgeDetail1RightValue) _markBadgeDetail1RightValue.visible = false;
+            if (_markBadgeDetail2RightValue) _markBadgeDetail2RightValue.visible = false;
+
+            g.lineStyle(1.0, 0x59616A, 0.48, true);
+            g.beginFill(0x080B0F, 0.72);
+            g.drawRoundRect(0, 0, badgeW, badgeH, 12, 12);
+            g.endFill();
+
+            g.lineStyle(1.0, 0x707780, 0.42, true);
+            g.beginFill(0x11161C, 0.72);
+            g.drawRoundRect(8, 10, 25, 28, 6, 6);
+            g.drawRoundRect(8, 48, 25, 28, 6, 6);
+            g.endFill();
+            g.lineStyle(1.4, 0xD9DEE3, 0.82, true);
+            if (_markBadgeExpanded)
+            {
+                g.moveTo(17, 26); g.lineTo(20.5, 22); g.lineTo(24, 26);
+            }
+            else
+            {
+                g.moveTo(17, 22); g.lineTo(20.5, 26); g.lineTo(24, 22);
+            }
+            g.lineStyle(1.2, 0xFFFFFF, 0.90, true);
+            g.moveTo(16, 68); g.lineTo(16, 64);
+            g.moveTo(20, 68); g.lineTo(20, 61);
+            g.moveTo(24, 68); g.lineTo(24, 65);
+            g.lineStyle(NaN);
+
+            var mark:Number = isNaN(_currentMark) ? 0.0 : _currentMark;
+            var filled:int = _markStars >= 0 ? _markStars : 0;
+            var sg:Graphics = _markBadgeStars.graphics;
+            sg.clear();
+            var i:int;
+            for (i = 0; i < 3; i++)
+            {
+                var starX:Number = 53 + i * 21;
+                sg.lineStyle(1.0, 0xBFC8D1, i < filled ? 0.86 : 0.42, true);
+                sg.beginFill(i < filled ? 0xFFFFFF : 0x27313C, 1.0);
+                _starPath(sg, starX, 23, 7, 3);
+                sg.endFill();
+            }
+            sg.lineStyle(NaN);
+
+            var contentX:int = 43;
+            var contentR:int = badgeW - 11;
+            var currentDamage:int = _estimateCurrentDamage(mark);
+
+            _markBadgeValue.htmlText = _fmtTitle(_fmt2(mark) + "%", 20, COLOR_LABEL);
+            _markBadgeValue.x = int(contentR - _markBadgeValue.width);
+            _markBadgeValue.y = 10;
+
+            var pg:Graphics = _markBadgeLine.graphics;
+            pg.clear();
+            var segCount:int = 5;
+            var segGap:Number = 2;
+            var barW:Number = contentR - contentX;
+            var segW:Number = (barW - (segCount - 1) * segGap) / segCount;
+            var filledLen:Number = barW * Math.max(0.0, Math.min(1.0, mark / 100.0));
+            for (i = 0; i < segCount; i++)
+            {
+                var segX:Number = contentX + i * (segW + segGap);
+                pg.beginFill(0x5E6871, 0.46);
+                pg.drawRect(segX, 43, segW, 5);
+                pg.endFill();
+                var segStart:Number = i * (segW + segGap);
+                var fillInSeg:Number = Math.max(0.0, Math.min(segW, filledLen - segStart));
+                if (fillInSeg > 0)
+                {
+                    pg.beginFill(0x8FEC55, 1.0);
+                    pg.drawRect(segX, 43, fillInSeg, 5);
+                    pg.endFill();
+                }
+            }
+
+            _markBadgeDelta.htmlText = _fmt("\u0421\u0443\u043c. \u0443\u0440\u043e\u043d", 13, 0xDDE3E8);
+            _markBadgeDelta.x = contentX;
+            _markBadgeDelta.y = 56;
+            _markBadgeDelta.visible = true;
+
+            _markBadgeTotal.htmlText = _fmtTitle(
+                currentDamage > 0 ? _fmtNum(currentDamage) : _strNoData, 14, COLOR_LABEL);
+            _markBadgeTotal.x = int(contentR - _markBadgeTotal.width);
+            _markBadgeTotal.y = 55;
+            _markBadgeTotal.visible = true;
+
+            _markBadgeDetail1.htmlText = _fmt("65%", 15, COLOR_LABEL_SOFT) + " " +
+                _fmt(_moe[0] > 0 ? _fmtNum(int(_moe[0])) : _strNoData, 15, COLOR_LABEL) +
+                _fmt("   85%", 15, COLOR_LABEL_SOFT) + " " +
+                _fmt(_moe[1] > 0 ? _fmtNum(int(_moe[1])) : _strNoData, 15, COLOR_LABEL);
+            _markBadgeDetail1.x = int(badgeW / 2 - _markBadgeDetail1.width / 2);
+            _markBadgeDetail1.y = 88;
+            _markBadgeDetail1.visible = _markBadgeExpanded;
+
+            _markBadgeDetail2.htmlText = _fmt("95%", 15, COLOR_LABEL_SOFT) + " " +
+                _fmt(_moe[2] > 0 ? _fmtNum(int(_moe[2])) : _strNoData, 15, COLOR_LABEL) +
+                _fmt("   100%", 15, COLOR_LABEL_SOFT) + " " +
+                _fmt(_moe[3] > 0 ? _fmtNum(int(_moe[3])) : _strNoData, 15, COLOR_LABEL);
+            _markBadgeDetail2.x = int(badgeW / 2 - _markBadgeDetail2.width / 2);
+            _markBadgeDetail2.y = 110;
+            _markBadgeDetail2.visible = _markBadgeExpanded;
+        }
+
+        private function _redrawMarkBadgeCompactLegacy():void
         {
             var badgeW:int = MARK_BADGE_W;
             var badgeH:int = _markBadgeExpanded ? MARK_BADGE_H_EXP : MARK_BADGE_H;
@@ -1778,7 +1904,7 @@ package com.inq.marks
             }
             // Короткий клік у будь-якому місці polaroid перемикає стан.
             // Рух понад CLICK_THRESHOLD як і раніше вважається перетягуванням.
-            if (_markBadgeStyle == 2 && !wasMoved)
+            if ((_markBadgeStyle == 1 || _markBadgeStyle == 2) && !wasMoved)
             {
                 _toggleMarkBadgeStyle3Expanded();
                 return;

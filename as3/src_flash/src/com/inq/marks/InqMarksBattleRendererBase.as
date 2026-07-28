@@ -928,19 +928,19 @@ package com.inq.marks
             // ── "Загалом" + "cur / req" (обидва приглушено-білі) ──
             var currentColor:uint = kind > 0 ? COMPACT_GREEN :
                                     (kind < 0 ? HTML_RED : COLOR_LABEL);
-            var sumSize:int = 13;
+            var sumSize:int = 15;
             _total.htmlText = _fmt(_fmtNum(current), sumSize, currentColor) +
                     _fmt(" / " + (target > 0 ? _fmtNum(target) : "N/A"), sumSize, 0xFFFFFF);
             _total.x = int(contentR - _total.width);
-            _total.y = 66;
+            _total.y = 64;
 
             _targetLabel.htmlText = _fmt(_strSumLabel(), sumSize, 0xFFFFFF);
             _targetLabel.x = contentX;
-            _targetLabel.y = 66;
+            _targetLabel.y = 64;
             _targetLabel.visible = true;
-            if (_targetLabel.x + _targetLabel.width + 6 > _total.x)
+            while (sumSize > 13 && _targetLabel.x + _targetLabel.width + 6 > _total.x)
             {
-                sumSize = 12;
+                sumSize--;
                 _total.htmlText = _fmt(_fmtNum(current), sumSize, currentColor) +
                         _fmt(" / " + (target > 0 ? _fmtNum(target) : "N/A"), sumSize, 0xFFFFFF);
                 _total.x = int(contentR - _total.width);
