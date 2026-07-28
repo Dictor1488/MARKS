@@ -895,7 +895,7 @@ package com.inq.marks
                 ((delta > 0 ? "+" : "-") + _fmt2(Math.abs(delta)) + "%");
             if (deltaStr.length > 0)
             {
-                _delta.htmlText = _fmt(deltaStr, 13, 0xFFFFFF);
+                _delta.htmlText = _fmt(deltaStr, 14, 0xFFFFFF);
                 _delta.x = 58;
                 _delta.y = 20;
                 _delta.visible = true;
@@ -928,15 +928,24 @@ package com.inq.marks
             // ── "Загалом" + "cur / req" (обидва приглушено-білі) ──
             var currentColor:uint = kind > 0 ? COMPACT_GREEN :
                                     (kind < 0 ? HTML_RED : COLOR_LABEL);
-            _total.htmlText = _fmt(_fmtNum(current), 12, currentColor) +
-                    _fmt(" / " + (target > 0 ? _fmtNum(target) : "N/A"), 12, 0xE2E8EE);
+            var sumSize:int = 13;
+            _total.htmlText = _fmt(_fmtNum(current), sumSize, currentColor) +
+                    _fmt(" / " + (target > 0 ? _fmtNum(target) : "N/A"), sumSize, 0xFFFFFF);
             _total.x = int(contentR - _total.width);
             _total.y = 66;
 
-            _targetLabel.htmlText = _fmt(_strSumLabel(), 12, 0xFFFFFF);
+            _targetLabel.htmlText = _fmt(_strSumLabel(), sumSize, 0xFFFFFF);
             _targetLabel.x = contentX;
             _targetLabel.y = 66;
             _targetLabel.visible = true;
+            if (_targetLabel.x + _targetLabel.width + 6 > _total.x)
+            {
+                sumSize = 12;
+                _total.htmlText = _fmt(_fmtNum(current), sumSize, currentColor) +
+                        _fmt(" / " + (target > 0 ? _fmtNum(target) : "N/A"), sumSize, 0xFFFFFF);
+                _total.x = int(contentR - _total.width);
+                _targetLabel.htmlText = _fmt(_strSumLabel(), sumSize, 0xFFFFFF);
+            }
 
             // ── expanded (Alt): найближча планка ──
             _targetLine.visible = false;
