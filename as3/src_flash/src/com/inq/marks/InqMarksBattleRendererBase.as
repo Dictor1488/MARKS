@@ -493,10 +493,12 @@ package com.inq.marks
 
             // "Current / target" line (без підпису)
             var baseTarget:int = _baseDamage > 0 ? _baseDamage : (nearestDmg > 0 ? nearestDmg : (_p85 > 0 ? _p85 : 0));
-            _total.htmlText = _fmtBold(_fmtNum(current), 14, COLOR_LABEL) +
-                              _fmt(" / " + (baseTarget > 0 ? _fmtNum(baseTarget) : "N/A"), 14, COLOR_DIM);
+            var currentDmgColor:uint = kind > 0 ? COLOR_GREEN :
+                                       (kind < 0 ? COLOR_RED : COLOR_LABEL);
+            _total.htmlText = _fmtBold(_fmtNum(current), 14, currentDmgColor) +
+                              _fmt(" / " + (baseTarget > 0 ? _fmtNum(baseTarget) : "N/A"), 14, COLOR_LABEL);
             // Сумарний прогрес під планкою — по центру.
-            _total.x = int(W / 2 - _total.width / 2);
+            _total.x = int(W - PAD - _total.width);
             _total.y = 68;
 
             // ── expanded: nearest milestone ──────────────────────────────────
@@ -514,11 +516,15 @@ package com.inq.marks
                 // Просто текст: "85%  3 761" без полосок
                 var pctStr:String = milestonePct.toFixed(0) + "%";
                 var dmgStr:String = _fmtNum(milestoneDmg);
-                _targetLabel.htmlText = _fmt(pctStr + "  " + dmgStr, 16, milestoneColor);
-                _targetLabel.x = int(W / 2 - _targetLabel.width / 2);
+                var milestoneGap:Number = 10;
+                _targetLabel.htmlText = _fmt(pctStr, 16, milestoneColor);
+                _targetDmg.htmlText = _fmt(dmgStr, 16, COLOR_LABEL);
+                var milestoneBlockW:Number = _targetLabel.width + milestoneGap + _targetDmg.width;
+                var milestoneBlockX:Number = int((W - milestoneBlockW) / 2);
+                _targetLabel.x = milestoneBlockX;
                 _targetLabel.y = 91;
-
-                _targetDmg.htmlText = "";
+                _targetDmg.x = int(milestoneBlockX + _targetLabel.width + milestoneGap);
+                _targetDmg.y = 91;
                 _targetLine.graphics.clear();
             }
         }
