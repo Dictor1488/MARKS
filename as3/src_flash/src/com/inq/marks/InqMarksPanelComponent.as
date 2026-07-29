@@ -799,7 +799,7 @@ package com.inq.marks
         private static const MARK_BADGE_W_COMPACT:int = 230;
         private static const MARK_BADGE_H_COMPACT:int = 86;
         private static const MARK_BADGE_H_COMPACT_EXP:int = 132;
-        private static const MARK_BADGE_W_CLASSIC_NEW:int = 250;
+        private static const MARK_BADGE_W_CLASSIC_NEW:int = 230;
         private static const MARK_BADGE_H_CLASSIC_NEW:int = 112;
         private static const MARK_BADGE_H_CLASSIC_NEW_EXP:int = 190;
         private static const MARK_BADGE_HTML_SCALE:Number = 1.0;
@@ -1189,7 +1189,7 @@ package com.inq.marks
             _markBadgeDetail1.visible = _markBadgeExpanded;
             _markBadgeDetail1Value.htmlText =
                 _fmt(_moe[0] > 0 ? _fmtNum(int(_moe[0])) : _strNoData, 14, COLOR_LABEL);
-            _markBadgeDetail1Value.x = int(118 - _markBadgeDetail1Value.width);
+            _markBadgeDetail1Value.x = 72;
             _markBadgeDetail1Value.y = 116;
 
             _markBadgeDetail2.htmlText = _fmt("95%", 14, COLOR_LABEL_SOFT);
@@ -1198,23 +1198,23 @@ package com.inq.marks
             _markBadgeDetail2.visible = _markBadgeExpanded;
             _markBadgeDetail2Value.htmlText =
                 _fmt(_moe[2] > 0 ? _fmtNum(int(_moe[2])) : _strNoData, 14, COLOR_LABEL);
-            _markBadgeDetail2Value.x = int(118 - _markBadgeDetail2Value.width);
+            _markBadgeDetail2Value.x = 72;
             _markBadgeDetail2Value.y = 148;
 
             _markBadgeDetail1Right.htmlText = _fmt("85%", 14, COLOR_LABEL_SOFT);
-            _markBadgeDetail1Right.x = 145;
+            _markBadgeDetail1Right.x = 130;
             _markBadgeDetail1Right.y = 116;
             _markBadgeDetail1RightValue.htmlText =
                 _fmt(_moe[1] > 0 ? _fmtNum(int(_moe[1])) : _strNoData, 14, COLOR_LABEL);
-            _markBadgeDetail1RightValue.x = int(contentR - _markBadgeDetail1RightValue.width);
+            _markBadgeDetail1RightValue.x = 170;
             _markBadgeDetail1RightValue.y = 116;
 
             _markBadgeDetail2Right.htmlText = _fmt("100%", 14, COLOR_LABEL_SOFT);
-            _markBadgeDetail2Right.x = 138;
+            _markBadgeDetail2Right.x = 123;
             _markBadgeDetail2Right.y = 148;
             _markBadgeDetail2RightValue.htmlText =
                 _fmt(_moe[3] > 0 ? _fmtNum(int(_moe[3])) : _strNoData, 14, COLOR_LABEL);
-            _markBadgeDetail2RightValue.x = int(contentR - _markBadgeDetail2RightValue.width);
+            _markBadgeDetail2RightValue.x = 170;
             _markBadgeDetail2RightValue.y = 148;
         }
 
