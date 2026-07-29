@@ -796,9 +796,12 @@ package com.inq.marks
         private static const MARK_BADGE_W:int = 198;
         private static const MARK_BADGE_H:int = 86;
         private static const MARK_BADGE_H_EXP:int = 132;
-        private static const MARK_BADGE_W_COMPACT:int = 250;
-        private static const MARK_BADGE_H_COMPACT:int = 112;
-        private static const MARK_BADGE_H_COMPACT_EXP:int = 190;
+        private static const MARK_BADGE_W_COMPACT:int = 230;
+        private static const MARK_BADGE_H_COMPACT:int = 86;
+        private static const MARK_BADGE_H_COMPACT_EXP:int = 132;
+        private static const MARK_BADGE_W_CLASSIC_NEW:int = 250;
+        private static const MARK_BADGE_H_CLASSIC_NEW:int = 112;
+        private static const MARK_BADGE_H_CLASSIC_NEW_EXP:int = 190;
         private static const MARK_BADGE_HTML_SCALE:Number = 1.0;
         private static const MARK_BADGE_W_HTML:int = 218;
         private static const MARK_BADGE_H_HTML:int = 54;
@@ -808,15 +811,18 @@ package com.inq.marks
 
         private function _mbW():int {
             return _markBadgeStyle == 2 ? MARK_BADGE_W_HTML :
-                   (_markBadgeStyle == 1 ? MARK_BADGE_W_COMPACT : MARK_BADGE_W);
+                   (_markBadgeStyle == 0 ? MARK_BADGE_W_CLASSIC_NEW :
+                   (_markBadgeStyle == 1 ? MARK_BADGE_W_COMPACT : MARK_BADGE_W));
         }
         private function _mbH():int {
             return _markBadgeStyle == 2 ? MARK_BADGE_H_HTML :
-                   (_markBadgeStyle == 1 ? MARK_BADGE_H_COMPACT : MARK_BADGE_H);
+                   (_markBadgeStyle == 0 ? MARK_BADGE_H_CLASSIC_NEW :
+                   (_markBadgeStyle == 1 ? MARK_BADGE_H_COMPACT : MARK_BADGE_H));
         }
         private function _mbHExp():int {
             return _markBadgeStyle == 2 ? MARK_BADGE_H_HTML_EXP :
-                   (_markBadgeStyle == 1 ? MARK_BADGE_H_COMPACT_EXP : MARK_BADGE_H_EXP);
+                   (_markBadgeStyle == 0 ? MARK_BADGE_H_CLASSIC_NEW_EXP :
+                   (_markBadgeStyle == 1 ? MARK_BADGE_H_COMPACT_EXP : MARK_BADGE_H_EXP));
         }
         private function _mbCurH():int { return _markBadgeExpanded ? _mbHExp() : _mbH(); }
 
@@ -1014,12 +1020,17 @@ package com.inq.marks
             _setMarkBadgeStyle3AssetsVisible(_markBadgeStyle == 2);
             if (_markBadgeStyle == 1)
             {
-                _redrawMarkBadgeCompact();
+                _redrawMarkBadgeCompactCurrent();
                 return;
             }
             if (_markBadgeStyle == 2)
             {
                 _redrawMarkBadgeHtmlStyle();
+                return;
+            }
+            if (_markBadgeStyle == 0)
+            {
+                _redrawMarkBadgeCompact();
                 return;
             }
             var badgeH:int = _markBadgeExpanded ? MARK_BADGE_H_EXP : MARK_BADGE_H;
@@ -1081,8 +1092,8 @@ package com.inq.marks
 
         private function _redrawMarkBadgeCompact():void
         {
-            var badgeW:int = MARK_BADGE_W_COMPACT;
-            var badgeH:int = _markBadgeExpanded ? MARK_BADGE_H_COMPACT_EXP : MARK_BADGE_H_COMPACT;
+            var badgeW:int = MARK_BADGE_W_CLASSIC_NEW;
+            var badgeH:int = _markBadgeExpanded ? MARK_BADGE_H_CLASSIC_NEW_EXP : MARK_BADGE_H_CLASSIC_NEW;
             var g:Graphics = _markBadgeBg.graphics;
             g.clear();
 
@@ -2045,7 +2056,7 @@ package com.inq.marks
             }
             // Короткий клік у будь-якому місці polaroid перемикає стан.
             // Рух понад CLICK_THRESHOLD як і раніше вважається перетягуванням.
-            if ((_markBadgeStyle == 1 || _markBadgeStyle == 2) && !wasMoved)
+            if ((_markBadgeStyle == 0 || _markBadgeStyle == 1 || _markBadgeStyle == 2) && !wasMoved)
             {
                 _toggleMarkBadgeStyle3Expanded();
                 return;
