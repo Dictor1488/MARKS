@@ -856,7 +856,7 @@ package com.inq.marks
             g.clear();
             // без рамки — тільки підтемнення фону, щоб текст не губився
             g.lineStyle(NaN);
-            g.beginFill(0x0A0E14, 0.14);
+            g.beginFill(0x0A0E14, 0.07);
             g.drawRoundRect(0, 0, W, h, 8, 8);
             g.endFill();
 
@@ -948,11 +948,11 @@ package com.inq.marks
                                     (kind < 0 ? HTML_RED : COLOR_LABEL);
             var sumSize:int = 15;
             _total.htmlText = _fmt(_fmtNum(current), sumSize, currentColor) +
-                    _fmt(" / " + (target > 0 ? _fmtNum(target) : "N/A"), sumSize, 0xFFFFFF);
+                    _fmt(" / " + (target > 0 ? _fmtNum(target) : "N/A"), sumSize, COLOR_DIM);
             _total.x = int(contentR - _total.width);
             _total.y = 64;
 
-            _targetLabel.htmlText = _fmt(_strSumLabel(), sumSize, 0xFFFFFF);
+            _targetLabel.htmlText = _fmt(_strSumLabel(), sumSize, COLOR_DIM);
             _targetLabel.x = contentX;
             _targetLabel.y = 64;
             _targetLabel.visible = true;
@@ -960,9 +960,9 @@ package com.inq.marks
             {
                 sumSize--;
                 _total.htmlText = _fmt(_fmtNum(current), sumSize, currentColor) +
-                        _fmt(" / " + (target > 0 ? _fmtNum(target) : "N/A"), sumSize, 0xFFFFFF);
+                        _fmt(" / " + (target > 0 ? _fmtNum(target) : "N/A"), sumSize, COLOR_DIM);
                 _total.x = int(contentR - _total.width);
-                _targetLabel.htmlText = _fmt(_strSumLabel(), sumSize, 0xFFFFFF);
+                _targetLabel.htmlText = _fmt(_strSumLabel(), sumSize, COLOR_DIM);
             }
 
             // ── expanded (Alt): найближча планка ──
