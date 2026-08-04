@@ -61,6 +61,7 @@ package com.inq.marks
         private static const TITLE_FONT_FACE:String = "$TitleFont";
         private static const COLOR_LABEL:uint  = 0xFFFFFF;
         private static const COLOR_DIM:uint    = 0x98A6B3;
+        private static const COMPACT_MUTED_WHITE:uint = 0xC8C8C8;
         private static const COLOR_GREEN:uint  = 0xB6E86A;
         private static const COLOR_RED:uint    = 0xD64A4A;
         private static const COLOR_GOLD:uint   = 0xC8B97A;
@@ -948,11 +949,11 @@ package com.inq.marks
                                     (kind < 0 ? HTML_RED : COLOR_LABEL);
             var sumSize:int = 15;
             _total.htmlText = _fmt(_fmtNum(current), sumSize, currentColor) +
-                    _fmt(" / " + (target > 0 ? _fmtNum(target) : "N/A"), sumSize, COLOR_DIM);
+                    _fmt(" / " + (target > 0 ? _fmtNum(target) : "N/A"), sumSize, COMPACT_MUTED_WHITE);
             _total.x = int(contentR - _total.width);
             _total.y = 64;
 
-            _targetLabel.htmlText = _fmt(_strSumLabel(), sumSize, COLOR_DIM);
+            _targetLabel.htmlText = _fmt(_strSumLabel(), sumSize, COMPACT_MUTED_WHITE);
             _targetLabel.x = contentX;
             _targetLabel.y = 64;
             _targetLabel.visible = true;
@@ -960,9 +961,9 @@ package com.inq.marks
             {
                 sumSize--;
                 _total.htmlText = _fmt(_fmtNum(current), sumSize, currentColor) +
-                        _fmt(" / " + (target > 0 ? _fmtNum(target) : "N/A"), sumSize, COLOR_DIM);
+                        _fmt(" / " + (target > 0 ? _fmtNum(target) : "N/A"), sumSize, COMPACT_MUTED_WHITE);
                 _total.x = int(contentR - _total.width);
-                _targetLabel.htmlText = _fmt(_strSumLabel(), sumSize, COLOR_DIM);
+                _targetLabel.htmlText = _fmt(_strSumLabel(), sumSize, COMPACT_MUTED_WHITE);
             }
 
             // ── expanded (Alt): найближча планка ──
