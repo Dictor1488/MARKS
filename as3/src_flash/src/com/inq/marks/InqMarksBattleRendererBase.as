@@ -61,7 +61,6 @@ package com.inq.marks
         private static const TITLE_FONT_FACE:String = "$TitleFont";
         private static const COLOR_LABEL:uint  = 0xFFFFFF;
         private static const COLOR_DIM:uint    = 0x98A6B3;
-        private static const COMPACT_MUTED_WHITE:uint = 0xC8C8C8;
         private static const COLOR_GREEN:uint  = 0xB6E86A;
         private static const COLOR_RED:uint    = 0xD64A4A;
         private static const COLOR_GOLD:uint   = 0xC8B97A;
@@ -399,6 +398,9 @@ package com.inq.marks
         private function _draw():void
         {
             var isPolaroid:Boolean = (_style == STYLE_POLAROID);
+            // Стилі можуть використовувати ці поля з різною прозорістю.
+            _targetLabel.alpha = 1.0;
+            _htmlSumTarget.alpha = 1.0;
             _setPanelContentVisible(true);
             _setTextFilters(isPolaroid);
             // HTML-асети (рамка/фон) — ТІЛЬКИ для polaroid, не для neer
@@ -883,7 +885,8 @@ package com.inq.marks
                 // знизу вгору: i=0 найнижча заповнюється першою
                 var starY:Number = starTopY + (2 - i) * starGap;
                 sg.lineStyle(1.0, 0xC9D2DC, i < filled ? 0.85 : 0.5, true);
-                sg.beginFill(i < filled ? 0xFFFFFF : 0x27313C, 1.0);
+                // Compact: тільки контур зірки, без внутрішньої заливки.
+                sg.beginFill(0xFFFFFF, 0.0);
                 _starPath(sg, starX, starY, 8, 3.4);
                 sg.endFill();
             }
@@ -948,22 +951,29 @@ package com.inq.marks
             var currentColor:uint = kind > 0 ? COMPACT_GREEN :
                                     (kind < 0 ? HTML_RED : COLOR_LABEL);
             var sumSize:int = 15;
-            _total.htmlText = _fmt(_fmtNum(current), sumSize, currentColor) +
-                    _fmt(" / " + (target > 0 ? _fmtNum(target) : "N/A"), sumSize, COMPACT_MUTED_WHITE);
-            _total.x = int(contentR - _total.width);
+            _htmlSumTarget.htmlText = _fmt(" / " + (target > 0 ? _fmtNum(target) : "N/A"), sumSize, 0xFFFFFF);
+            _htmlSumTarget.alpha = 0.70;
+            _htmlSumTarget.x = int(contentR - _htmlSumTarget.width);
+            _htmlSumTarget.y = 64;
+            _htmlSumTarget.visible = true;
+
+            _total.htmlText = _fmt(_fmtNum(current), sumSize, currentColor);
+            _total.x = int(_htmlSumTarget.x - _total.width);
             _total.y = 64;
 
-            _targetLabel.htmlText = _fmt(_strSumLabel(), sumSize, COMPACT_MUTED_WHITE);
+            _targetLabel.htmlText = _fmt(_strSumLabel(), sumSize, 0xFFFFFF);
+            _targetLabel.alpha = 0.70;
             _targetLabel.x = contentX;
             _targetLabel.y = 64;
             _targetLabel.visible = true;
             while (sumSize > 13 && _targetLabel.x + _targetLabel.width + 6 > _total.x)
             {
                 sumSize--;
-                _total.htmlText = _fmt(_fmtNum(current), sumSize, currentColor) +
-                        _fmt(" / " + (target > 0 ? _fmtNum(target) : "N/A"), sumSize, COMPACT_MUTED_WHITE);
-                _total.x = int(contentR - _total.width);
-                _targetLabel.htmlText = _fmt(_strSumLabel(), sumSize, COMPACT_MUTED_WHITE);
+                _htmlSumTarget.htmlText = _fmt(" / " + (target > 0 ? _fmtNum(target) : "N/A"), sumSize, 0xFFFFFF);
+                _htmlSumTarget.x = int(contentR - _htmlSumTarget.width);
+                _total.htmlText = _fmt(_fmtNum(current), sumSize, currentColor);
+                _total.x = int(_htmlSumTarget.x - _total.width);
+                _targetLabel.htmlText = _fmt(_strSumLabel(), sumSize, 0xFFFFFF);
             }
 
             // ── expanded (Alt): найближча планка ──
