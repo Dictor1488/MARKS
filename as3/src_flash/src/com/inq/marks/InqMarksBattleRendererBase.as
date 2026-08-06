@@ -884,9 +884,9 @@ package com.inq.marks
             {
                 // знизу вгору: i=0 найнижча заповнюється першою
                 var starY:Number = starTopY + (2 - i) * starGap;
-                sg.lineStyle(1.0, 0xC9D2DC, i < filled ? 0.85 : 0.5, true);
-                // Compact: тільки контур зірки, без внутрішньої заливки.
-                sg.beginFill(0xFFFFFF, 0.0);
+                // Зароблені зірки заповнені, незароблені мають лише м'який контур.
+                sg.lineStyle(1.0, 0xC9D2DC, i < filled ? 0.62 : 0.28, true);
+                sg.beginFill(0xFFFFFF, i < filled ? 0.90 : 0.0);
                 _starPath(sg, starX, starY, 8, 3.4);
                 sg.endFill();
             }
